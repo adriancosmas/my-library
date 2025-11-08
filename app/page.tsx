@@ -218,12 +218,13 @@ export default async function Home({
       <Header />
       <main className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-12">
-          <h2 className="text-4xl font-semibold dark:text-white text-neutral-900 tracking-tight">
+          <h2 className="text-4xl font-semibold dark:text-white text-neutral-900 tracking-tight font-sans">
             Just tons of libraries & tools to help your daily life
           </h2>
-          <p className="mt-4 lg:mt-2 xl:mt-2 md:mt-2 text-sm text-zinc-400">
+
+          <p className="mt-4 lg:mt-2 xl:mt-2 md:mt-2 text-sm text-zinc-400 font-sans font-light">
             curated by {' '}
-            <span className="font-semibold text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200">
+            <span className="font-medium text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200">
               <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer">
                 Cosmas
               </a>
@@ -239,7 +240,7 @@ export default async function Home({
           ))}
 
           {libraries.length === 0 && (
-            <div className="col-span-full rounded-xl border border-white/10 p-6 text-center text-zinc-400">
+            <div className="col-span-full rounded-xl border border-white/10 p-6 text-center text-zinc-400 font-sans">
               No libraries found.
             </div>
           )}
@@ -251,7 +252,7 @@ export default async function Home({
               <PaginationItem>
                 <PaginationPrevious
                   href={hasPrev ? makeHref(pageNum - 1) : undefined}
-                  className={!hasPrev ? "pointer-events-none opacity-50 text-neutral-500 font-semibold" : undefined}
+                  className={!hasPrev ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
                 />
               </PaginationItem>
 
@@ -262,7 +263,7 @@ export default async function Home({
                   </PaginationItem>
                 ) : (
                   <PaginationItem key={item}>
-                    <PaginationLink href={makeHref(item)} isActive={item === pageNum}>
+                    <PaginationLink href={makeHref(item)} isActive={item === pageNum} className="font-sans">
                       {item}
                     </PaginationLink>
                   </PaginationItem>
@@ -272,7 +273,7 @@ export default async function Home({
               <PaginationItem>
                 <PaginationNext
                   href={hasNext ? makeHref(pageNum + 1) : undefined}
-                  className={!hasNext ? "pointer-events-none opacity-50 text-neutral-500 font-semibold" : undefined}
+                  className={!hasNext ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
                 />
               </PaginationItem>
             </PaginationContent>

@@ -97,7 +97,7 @@ export default function FilterBar() {
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && updateQuery({ q })}
             placeholder="Search library name..."
-            className="text-neutral-900 dark:text-white text-base" />
+            className="text-neutral-900 dark:text-white text-base font-sans font-light" />
           <InputGroupAddon>
             <Search className="mr-1"/>
           </InputGroupAddon>
@@ -105,7 +105,7 @@ export default function FilterBar() {
       </div>
 
       <div className="flex-1 flex-col items-start gap-2 justify-start w-full">
-        <p className="pb-2 dark:text-white text-neutral-900">Framework</p>
+        <p className="pb-2 dark:text-white text-neutral-900 font-sans font-light">Framework</p>
 
         <select
           value={framework}
@@ -130,7 +130,7 @@ export default function FilterBar() {
       </div>
      
       <div className="flex-1 flex-col items-start gap-2 justify-start w-full">
-        <p className="pb-2 dark:text-white text-neutral-900">Category</p>
+        <p className="pb-2 dark:text-white text-neutral-900 font-sans font-light">Category</p>
 
         <select
           value={tag}
@@ -156,7 +156,7 @@ export default function FilterBar() {
 
       <button
         onClick={() => updateQuery({ q })}
-        className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-2 xl:py-2 md:py-2 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full"
+        className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-1.5 xl:py-1.5 md:py-1.5 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full font-sans"
       >
         Search
       </button>

@@ -79,7 +79,7 @@ export default function AddTags(){
     return(
         <>
             <Tags className="w-full">
-                <TagsTrigger className="cursor-pointer dark:bg-transparent py-2 px-4 rounded-md bg-white text-base border border-black/10 dark:border-white/10">
+                <TagsTrigger className="cursor-pointer dark:bg-transparent py-2 px-4 rounded-md bg-white text-base border border-black/10 dark:border-white/10 font-sans">
                     {selected.map((tag) => (
                     <TagsValue key={tag} onRemove={() => handleRemove(tag)}>
                         {tags.find((t) => t.id === tag)?.label}
@@ -92,7 +92,7 @@ export default function AddTags(){
                     <TagsList>
                         <TagsEmpty>
                            <button
-                                className="mx-auto flex cursor-pointer items-center gap-2 dark:bg-white/5 py-2 px-4 rounded-md bg-black/5 text-base"
+                                className="mx-auto flex cursor-pointer items-center gap-2 dark:bg-white/5 py-2 px-4 rounded-md bg-black/5 text-base font-sans"
                                 onClick={handleCreateTag}
                                 type="button"
                             >

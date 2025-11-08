@@ -14,27 +14,27 @@ export default function NameSlugFields() {
   return (
     <>
       <div className="grid gap-2">
-        <label className="text-sm">Name</label>
+        <label className="text-sm font-sans font-light">Name</label>
         <input
           name="name"
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2"
+          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
         />
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm">Slug</label>
+        <label className="text-sm font-sans font-light">Slug</label>
         <input
-        disabled
+          disabled
           name="slug"
           required
           value={slug}
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value))}
           placeholder=""
-          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2"
+          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
         />
       </div>
     </>

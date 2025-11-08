@@ -38,7 +38,7 @@ export default function ThemeToggle() {
       aria-label="Toggle color theme"
     >
       {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
-      <span className="hidden sm:inline">{isDark ? "Light" : "Dark"} mode</span>
+      <span className="hidden sm:inline font-sans font-light">{isDark ? "Light" : "Dark"} mode</span>
     </Button>
   );
 }

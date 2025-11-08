@@ -9,6 +9,8 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
+import { Spinner } from "@/components/ui/spinner"
+import Modal from "./Modal";
 
 export default function FilterBar() {
   const searchParams = useSearchParams();
@@ -18,8 +20,10 @@ export default function FilterBar() {
   const [tag, setTag] = useState(searchParams.get("tag") || "All");
   const [tagOptions, setTagOptions] = useState<string[]>(["All", ...TAGS]);
   const [frameworkOptions, setFrameworkOptions] = useState<string[]>(FRAMEWORKS);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    setOpen(false);
     setQ(searchParams.get("q") || "");
     setFramework(searchParams.get("framework") || "All");
     setTag(searchParams.get("tag") || "All");
@@ -77,6 +81,7 @@ export default function FilterBar() {
   }, []);
 
   function updateQuery(next: { q?: string; }) {
+    setOpen(true);
     const params = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (next.q !== undefined) {
@@ -155,11 +160,21 @@ export default function FilterBar() {
       </div> 
 
       <button
+        disabled={!q}
         onClick={() => updateQuery({ q })}
-        className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-1.5 xl:py-1.5 md:py-1.5 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full font-sans"
+        className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-1.5 xl:py-1.5 md:py-1.5 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full font-sans transition-colors disabled:cursor-default"
       >
         Search
       </button>
+
+      <div className="hidden">
+        <Modal open={open} onClose={() => setOpen(false)}>
+          <div className="flex flex-col items-center justify-center gap-4">
+            <Spinner className="w-12 h-12 text-yellow-400 dark:text-yellow-200" />
+            <p className="text-neutral-900 font-sans font-light text-base text-center dark:text-white">Loading your request</p>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 }

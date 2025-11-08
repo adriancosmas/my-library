@@ -28,7 +28,7 @@ export default function LibraryCard({ lib }: { lib: Library }) {
         {lib.tags.map((t) => (
           <span
             key={t}
-            className="rounded-full border border-neutral-400 dark:border-zinc-600 bg-white/5 px-2 py-1 text-xs text-zinc-600 dark:text-zinc-400"
+            className="rounded-full border-0 border-neutral-100/70 dark:border-white/10 bg-black/5 dark:bg-white/10 px-2 py-1 text-xs text-zinc-600 dark:text-zinc-300"
           >
             {t}
           </span>

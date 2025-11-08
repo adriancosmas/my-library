@@ -89,7 +89,7 @@ export default function FilterBar() {
   }
 
   return (
-    <div className="flex w-full items-end gap-4 text-sm text-zinc-200 flex-col xl:flex-row lg:flex-row md:flex-row">
+    <div className="flex w-full items-end gap-4 text-sm text-zinc-200 flex-col xl:flex-row lg:flex-row md:flex-row xl:pb-0 lg:pb-0 pb-6 md:pb-0">
       <div className="flex-2 rounded-md w-full">
         <InputGroup noRing className="dark:bg-black/60 dark:border-white/10 border shadow-none py-4.5">
           <InputGroupInput 

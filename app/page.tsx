@@ -47,8 +47,11 @@ export default async function Home({
     const { count: viewCount } = await countQuery;
     if (typeof viewCount === "number") totalCount = viewCount;
 
-    // Data query with pagination on view
-    let query = client.from("library_with_tags").select("*");
+    // Data query with pagination on view (latest first)
+    let query = client
+      .from("library_with_tags")
+      .select("*")
+      .order('created_at', { ascending: false });
     if (filters.q) query = query.ilike("name", `%${filters.q}%`);
     if (filters.framework) query = query.eq("framework", filters.framework);
     if (filters.tag) query = query.contains("tags", [filters.tag]);
@@ -61,18 +64,47 @@ export default async function Home({
         "Supabase view missing, falling back to libraries:",
         error.message
       );
-      // Count on base table (no tag filter in fallback)
+      // Build optional tag-based library id filter in fallback
+      let tagLibIds: string[] | null = null;
+      if (filters.tag) {
+        const { data: tagRow, error: tagFindError } = await client
+          .from("tags")
+          .select("id")
+          .eq("name", filters.tag)
+          .single();
+        if (tagFindError) {
+          console.warn("Fallback: tag lookup failed", tagFindError.message);
+          tagLibIds = [];
+        } else if (tagRow?.id) {
+          const { data: ltRows, error: ltIdsError } = await client
+            .from("library_tags")
+            .select("library_id")
+            .eq("tag_id", tagRow.id);
+          if (ltIdsError) {
+            console.warn("Fallback: library_ids by tag failed", ltIdsError.message);
+            tagLibIds = [];
+          } else {
+            tagLibIds = Array.isArray(ltRows) ? ltRows.map((r: any) => String(r.library_id)) : [];
+          }
+        } else {
+          tagLibIds = [];
+        }
+      }
+
+      // Count on base table (apply q/framework and tag via id filter)
       let libCountQuery = client
         .from("libraries")
         .select("*", { count: "exact", head: true });
       if (filters.q) libCountQuery = libCountQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libCountQuery = libCountQuery.eq("framework", filters.framework);
+      if (tagLibIds) libCountQuery = libCountQuery.in("id", tagLibIds);
       const { count: libCount } = await libCountQuery;
       if (typeof libCount === "number") totalCount = libCount;
 
-      let libQuery = client.from("libraries").select("*").order('id', { ascending: false });
+      let libQuery = client.from("libraries").select("*").order('created_at', { ascending: false });
       if (filters.q) libQuery = libQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
+      if (tagLibIds) libQuery = libQuery.in("id", tagLibIds);
       libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
       const { data: libRows, error: libError } = await libQuery;
       if (libError) {

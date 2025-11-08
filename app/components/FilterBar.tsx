@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FRAMEWORKS, TAGS } from "@/lib/sampleData";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 export default function FilterBar() {
   const searchParams = useSearchParams();
@@ -11,12 +12,38 @@ export default function FilterBar() {
     searchParams.get("framework") || "All"
   );
   const [tag, setTag] = useState(searchParams.get("tag") || "All");
+  const [tagOptions, setTagOptions] = useState<string[]>(["All", ...TAGS]);
 
   useEffect(() => {
     setQ(searchParams.get("q") || "");
     setFramework(searchParams.get("framework") || "All");
     setTag(searchParams.get("tag") || "All");
   }, [searchParams]);
+
+  // Dynamically load tags from Supabase, with fallback to sample data
+  useEffect(() => {
+    let cancelled = false;
+    const client = getSupabaseClient();
+    async function loadTags() {
+      if (!client) {
+        if (!cancelled) setTagOptions(["All", ...TAGS]);
+        return;
+      }
+      const { data, error } = await client.from("tags").select("name").order("name", { ascending: true });
+      if (cancelled) return;
+      if (error) {
+        console.warn("Failed to fetch tags", error.message);
+        setTagOptions(["All", ...TAGS]);
+      } else {
+        const names = Array.isArray(data) ? data.map((t: any) => String(t.name)) : [];
+        setTagOptions(["All", ...names]);
+      }
+    }
+    loadTags();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function updateQuery(next: { q?: string; framework?: string }) {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
@@ -73,7 +100,7 @@ export default function FilterBar() {
         }}
         className="rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
       >
-        {(["All", ...TAGS] as string[]).map((t) => (
+        {tagOptions.map((t) => (
           <option key={t} value={t} className="text-neutral-900 dark:text-white">
             {t}
           </option>

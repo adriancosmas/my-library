@@ -1,63 +1,255 @@
-import Image from "next/image";
+import FilterBar from "./components/FilterBar";
+import LibraryCard from "./components/LibraryCard";
+import { getSupabaseClient } from "@/lib/supabaseClient";
+import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
+import type { Library, LibraryFilters } from "@/lib/types";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "@/components/ui/pagination";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  // Next.js 16: searchParams is a Promise
+  searchParams?: Promise<LibraryFilters>;
+}) {
+  const params = await searchParams;
+  const filters = params || {};
+  const client = getSupabaseClient();
+  const PAGE_SIZE = 30;
+  let pageNum = 1;
+  if (filters.page) {
+    const parsed = Number(filters.page);
+    if (Number.isFinite(parsed) && parsed > 0) pageNum = Math.floor(parsed);
+  }
+  const offset = (pageNum - 1) * PAGE_SIZE;
+
+  let libraries: Library[] = [];
+  let totalCount: number | null = null;
+
+  if (client) {
+    // Build Supabase query with optional filters
+    // Prefer the view that includes `tags` array
+    // Count query on view
+    let countQuery = client
+      .from("library_with_tags")
+      .select("*", { count: "exact", head: true });
+    if (filters.q) countQuery = countQuery.ilike("name", `%${filters.q}%`);
+    if (filters.framework) countQuery = countQuery.eq("framework", filters.framework);
+    if (filters.tag) countQuery = countQuery.contains("tags", [filters.tag]);
+    const { count: viewCount } = await countQuery;
+    if (typeof viewCount === "number") totalCount = viewCount;
+
+    // Data query with pagination on view
+    let query = client.from("library_with_tags").select("*");
+    if (filters.q) query = query.ilike("name", `%${filters.q}%`);
+    if (filters.framework) query = query.eq("framework", filters.framework);
+    if (filters.tag) query = query.contains("tags", [filters.tag]);
+    query = query.range(offset, offset + PAGE_SIZE - 1);
+
+    const { data, error } = await query;
+    if (error) {
+      // Fallback gracefully if the view isn't available yet
+      console.warn(
+        "Supabase view missing, falling back to libraries:",
+        error.message
+      );
+      // Count on base table (no tag filter in fallback)
+      let libCountQuery = client
+        .from("libraries")
+        .select("*", { count: "exact", head: true });
+      if (filters.q) libCountQuery = libCountQuery.ilike("name", `%${filters.q}%`);
+      if (filters.framework) libCountQuery = libCountQuery.eq("framework", filters.framework);
+      const { count: libCount } = await libCountQuery;
+      if (typeof libCount === "number") totalCount = libCount;
+
+      let libQuery = client.from("libraries").select("*").order('id', { ascending: false });
+      if (filters.q) libQuery = libQuery.ilike("name", `%${filters.q}%`);
+      if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
+      libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
+      const { data: libRows, error: libError } = await libQuery;
+      if (libError) {
+        console.error("Supabase fallback error", libError.message);
+      } else if (libRows) {
+        const rows = libRows as any[];
+        const libIds = rows.map((r) => r.id).filter(Boolean);
+
+        // Fetch tags via relationship from library_tags -> tags
+        let tagsByLib: Record<string, string[]> = {};
+        if (libIds.length > 0) {
+          const { data: ltRows, error: ltError } = await client
+            .from("library_tags")
+            .select("library_id, tags(name)")
+            .in("library_id", libIds);
+          if (ltError) {
+            console.warn("Supabase tags fallback error", ltError.message);
+          } else if (ltRows) {
+            for (const row of ltRows as any[]) {
+              const lid = String(row.library_id);
+              const tagName = row?.tags?.name as string | undefined;
+              if (tagName) {
+                if (!tagsByLib[lid]) tagsByLib[lid] = [];
+                if (!tagsByLib[lid].includes(tagName)) tagsByLib[lid].push(tagName);
+              }
+            }
+          }
+        }
+
+        libraries = rows.map((row) => ({
+          id: String(row.id),
+          name: row.name,
+          slug: row.slug,
+          description: row.description,
+          framework: row.framework,
+          website_url: row.website_url,
+          logo_url: row.logo_url,
+          tags: tagsByLib[String(row.id)] || [],
+        }));
+      }
+    } else if (data) {
+      libraries = (data as any[]).map((row) => ({
+        id: String(row.id),
+        name: row.name,
+        slug: row.slug,
+        description: row.description,
+        framework: row.framework,
+        website_url: row.website_url,
+        logo_url: row.logo_url,
+        tags: Array.isArray(row.tags) ? row.tags : [],
+      }));
+    }
+  }
+
+  // Fallback to sample data when no Supabase env present
+  if (!client || libraries.length === 0) {
+    const filtered = SAMPLE_LIBRARIES.filter((lib) => {
+      const matchesQ = filters.q
+        ? lib.name.toLowerCase().includes(filters.q.toLowerCase())
+        : true;
+      const matchesFw = filters.framework && filters.framework !== "All"
+        ? lib.framework === filters.framework
+        : true;
+      const matchesTag = filters.tag ? lib.tags.includes(filters.tag) : true;
+      return matchesQ && matchesFw && matchesTag;
+    });
+    totalCount = filtered.length;
+    libraries = filtered.slice(offset, offset + PAGE_SIZE);
+  }
+
+  const totalPages = totalCount ? Math.max(1, Math.ceil(totalCount / PAGE_SIZE)) : null;
+  const baseParams = new URLSearchParams();
+  if (filters.q) baseParams.set("q", filters.q);
+  if (filters.framework && filters.framework !== "All") baseParams.set("framework", filters.framework);
+  if (filters.tag) baseParams.set("tag", filters.tag);
+  const makeHref = (p: number) => {
+    const params = new URLSearchParams(baseParams);
+    params.set("page", String(Math.max(1, p)));
+    return `/?${params.toString()}`;
+  };
+  const safeTotal = totalPages ?? (libraries.length === PAGE_SIZE ? pageNum + 1 : pageNum);
+  const hasPrev = pageNum > 1;
+  const hasNext = pageNum < safeTotal;
+  const getPages = (current: number, total: number) => {
+    const pages: Array<number | "ellipsis"> = [];
+    if (total <= 7) {
+      for (let i = 1; i <= total; i++) pages.push(i);
+      return pages;
+    }
+    pages.push(1);
+    if (current > 3) {
+      pages.push("ellipsis");
+    } else {
+      pages.push(2);
+    }
+    if (current - 1 > 1 && current - 1 < total) pages.push(current - 1);
+    if (current > 1 && current < total) pages.push(current);
+    if (current + 1 > 1 && current + 1 < total) pages.push(current + 1);
+    if (current < total - 2) {
+      pages.push("ellipsis");
+    } else {
+      pages.push(total - 1);
+    }
+    pages.push(total);
+    // Deduplicate consecutive numbers
+    return pages.filter((v, i, arr) => (i === 0 ? true : v !== arr[i - 1]));
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen bg-black">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-black/80 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <h1 className="text-lg font-semibold text-white">mY Library</h1>
+          <a
+            href="/submit"
+            className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-200"
+          >
+            Submit Library
+          </a>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        <div className="mb-6">
+          <h2 className="text-3xl font-semibold text-white">
+            Just tons of libraries & tools to help your daily
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            curated by Cosmas
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <FilterBar />
+        
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {libraries.map((lib) => (
+            <LibraryCard key={lib.id} lib={lib} />
+          ))}
+
+          {libraries.length === 0 && (
+            <div className="col-span-full rounded-xl border border-white/10 p-6 text-center text-zinc-400">
+              No libraries found.
+            </div>
+          )}
+        </div>
+
+        <div className="mt-10">
+          <Pagination className="text-sm">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href={hasPrev ? makeHref(pageNum - 1) : undefined}
+                  className={!hasPrev ? "pointer-events-none opacity-50 text-neutral-500 font-semibold" : undefined}
+                />
+              </PaginationItem>
+
+              {getPages(pageNum, safeTotal).map((item, idx) => (
+                item === "ellipsis" ? (
+                  <PaginationItem key={`ellipsis-${idx}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={item}>
+                    <PaginationLink href={makeHref(item)} isActive={item === pageNum}>
+                      {item}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext
+                  href={hasNext ? makeHref(pageNum + 1) : undefined}
+                  className={!hasNext ? "pointer-events-none opacity-50 text-neutral-500 font-semibold" : undefined}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       </main>
     </div>

@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# best-tools
 
-## Getting Started
+A Next.js catalogue website similar to the screenshot, backed by Supabase.
 
-First, run the development server:
+## Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 18+
+- A Supabase project (free tier works)
+
+## Environment
+
+Create `.env.local` in the project root (already added) and set:
+
+```
+SUPABASE_URL=your_project_url
+SUPABASE_ANON_KEY=your_anon_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Database Schema
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Copy the SQL from `supabase/schema.sql` into the Supabase SQL editor and run it to create `libraries`, `tags`, and `library_tags`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To quickly populate example rows, run `supabase/seed.sql` next.
 
-## Learn More
+## Development
 
-To learn more about Next.js, take a look at the following resources:
+Install dependencies and start the dev server:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open http://localhost:3000. If env vars are not set, the page falls back to sample data so you can still preview the UI.
 
-## Deploy on Vercel
+### Submission and RLS
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- For server-side inserts, set `SUPABASE_SERVICE_ROLE_KEY` in `.env.local` (never expose it client-side). The submission form uses this key on the server when available.
+- If you prefer inserting with the anon key, update RLS policies to allow `insert` into `libraries`, `tags`, and `library_tags` for unauthenticated users or authenticated roles as you see fit.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+- Current filters: search by name (`q`) and framework (`framework`).
+- Tag filtering can be enabled by returning a `tags` array per library (see `library_with_tags` view in `schema.sql`).

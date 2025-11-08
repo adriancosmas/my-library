@@ -17,7 +17,7 @@ export default function LibraryCard({ lib }: { lib: Library }) {
         </div>
 
         <div className="flex flex-col">
-          <span className="text-xl font-semibold text-neutral-900 dark:text-zinc-300 antialiased">{lib.name}</span>
+          <span className="text-xl font-semibold text-neutral-900 dark:text-white antialiased">{lib.name}</span>
           <span className="text-sm text-zinc-400">{lib.framework || "Tools"}</span>
         </div>
       </div>

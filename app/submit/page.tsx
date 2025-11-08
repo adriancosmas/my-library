@@ -4,13 +4,14 @@ import { getSupabaseServerClient, getSupabaseClient } from "@/lib/supabaseClient
 import Header from "@/app/components/Header";
 import NameSlugFields from "./NameSlugFields";
 import { slugify } from "@/lib/utils";
+import AddTags from "./AddTags";
 
 async function createLibrary(formData: FormData) {
   "use server";
   const name = String(formData.get("name") || "").trim();
   const slugInput = String(formData.get("slug") || "").trim();
   const description = String(formData.get("description") || "").trim();
-  const framework = String(formData.get("framework") || "").trim();
+  const framework = String(formData.get("framework") || "Tools").trim();
   const website_url = String(formData.get("website_url") || "").trim();
   const logo_url = String(formData.get("logo_url") || "").trim();
   const tagsInput = String(formData.get("tags") || "").trim();
@@ -151,8 +152,8 @@ export default async function SubmitPage({
         </div>
 
         <div className="grid gap-2">
-          <label className="text-sm">Tags (comma separated)</label>
-          <input name="tags" placeholder="components, tailwind, react" className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2" />
+          <label className="text-sm">Tags</label>
+          <AddTags />
         </div>
         
         <button

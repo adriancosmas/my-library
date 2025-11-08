@@ -41,7 +41,7 @@ export default function FilterBar() {
         onChange={(e) => setQ(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && updateQuery({ q })}
         placeholder="Search library name..."
-        className="flex-1 rounded-md border border-white/10 bg-black/60 px-3 py-2 outline-none"
+        className="flex-1 rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 outline-none text-neutral-900 dark:text-white"
       />
       <select
         value={framework}
@@ -50,14 +50,15 @@ export default function FilterBar() {
           setFramework(value);
           updateQuery({ framework: value });
         }}
-        className="rounded-md border border-white/10 bg-black/60 px-3 py-2"
+        className="rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
       >
         {FRAMEWORKS.map((fw) => (
-          <option key={fw} value={fw}>
+          <option key={fw} value={fw} className="text-neutral-900 dark:text-white">
             {fw}
           </option>
         ))}
       </select>
+
       <select
         value={tag}
         onChange={(e) => {
@@ -70,17 +71,18 @@ export default function FilterBar() {
           params.delete("page");
           router.push(`/?${params.toString()}`);
         }}
-        className="rounded-md border border-white/10 bg-black/60 px-3 py-2"
+        className="rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
       >
         {(["All", ...TAGS] as string[]).map((t) => (
-          <option key={t} value={t}>
+          <option key={t} value={t} className="text-neutral-900 dark:text-white">
             {t}
           </option>
         ))}
       </select>
+
       <button
         onClick={() => updateQuery({ q })}
-        className="rounded-md bg-white px-4 py-2 cursor-pointer text-neutral-900 font-semibold"
+        className="rounded-md dark:bg-yellow-200 px-4 py-2 cursor-pointer text-neutral-900 font-semibold bg-yellow-400"
       >
         Search
       </button>

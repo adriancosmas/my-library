@@ -1,5 +1,6 @@
 import FilterBar from "./components/FilterBar";
 import LibraryCard from "./components/LibraryCard";
+import Header from "./components/Header";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
 import type { Library, LibraryFilters } from "@/lib/types";
@@ -181,22 +182,11 @@ export default async function Home({
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-black/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <h1 className="text-lg font-semibold text-white">mY Library</h1>
-          <a
-            href="/submit"
-            className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm text-zinc-200"
-          >
-            Submit Library
-          </a>
-        </div>
-      </header>
-
+    <div className="min-h-screen dark:bg-black bg-white">
+      <Header />
       <main className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-6">
-          <h2 className="text-3xl font-semibold text-white">
+          <h2 className="text-4xl font-semibold dark:text-white text-neutral-900 tracking-tight">
             Just tons of libraries & tools to help your daily
           </h2>
           <p className="mt-2 text-sm text-zinc-400">

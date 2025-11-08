@@ -217,12 +217,17 @@ export default async function Home({
     <div className="min-h-screen dark:bg-black bg-white">
       <Header />
       <main className="mx-auto max-w-6xl px-6 py-8">
-        <div className="mb-6">
+        <div className="mb-12">
           <h2 className="text-4xl font-semibold dark:text-white text-neutral-900 tracking-tight">
-            Just tons of libraries & tools to help your daily
+            Just tons of libraries & tools to help your daily life
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
-            curated by Cosmas
+          <p className="mt-4 lg:mt-2 xl:mt-2 md:mt-2 text-sm text-zinc-400">
+            curated by {' '}
+            <span className="font-semibold text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200">
+              <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer">
+                Cosmas
+              </a>
+            </span>
           </p>
         </div>
 

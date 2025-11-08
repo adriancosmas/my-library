@@ -3,16 +3,21 @@ import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FRAMEWORKS, TAGS } from "@/lib/sampleData";
 import { getSupabaseClient } from "@/lib/supabaseClient";
+import { Search } from "lucide-react"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group"
 
 export default function FilterBar() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [q, setQ] = useState(searchParams.get("q") || "");
-  const [framework, setFramework] = useState(
-    searchParams.get("framework") || "All"
-  );
+  const [framework, setFramework] = useState(searchParams.get("framework") || "All");
   const [tag, setTag] = useState(searchParams.get("tag") || "All");
   const [tagOptions, setTagOptions] = useState<string[]>(["All", ...TAGS]);
+  const [frameworkOptions, setFrameworkOptions] = useState<string[]>(FRAMEWORKS);
 
   useEffect(() => {
     setQ(searchParams.get("q") || "");
@@ -24,6 +29,7 @@ export default function FilterBar() {
   useEffect(() => {
     let cancelled = false;
     const client = getSupabaseClient();
+
     async function loadTags() {
       if (!client) {
         if (!cancelled) setTagOptions(["All", ...TAGS]);
@@ -39,77 +45,118 @@ export default function FilterBar() {
         setTagOptions(["All", ...names]);
       }
     }
+
+    async function loadFrameworks() {
+      if (!client) {
+        if (!cancelled) setFrameworkOptions(FRAMEWORKS);
+        return;
+      }
+
+      const { data, error } = await client.from("libraries").select("framework").order("framework", { ascending: true });
+
+      if (cancelled) return;
+
+      if (error) {
+        console.warn("Failed to fetch frameworks", error.message);
+        setFrameworkOptions(FRAMEWORKS);
+      } else {
+        const names = Array.isArray(data) ? data.map((t: any) => String(t.framework)).filter(Boolean) : [];
+
+        const unique = Array.from(new Set(names));
+
+        setFrameworkOptions(["All", ...unique]);
+      }
+    }
+
     loadTags();
+    loadFrameworks();
+
     return () => {
       cancelled = true;
     };
   }, []);
 
-  function updateQuery(next: { q?: string; framework?: string }) {
+  function updateQuery(next: { q?: string; }) {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
+
     if (next.q !== undefined) {
       if (next.q) params.set("q", next.q);
       else params.delete("q");
     }
-    if (next.framework !== undefined) {
-      const value = next.framework;
-      if (value && value !== "All") params.set("framework", value);
-      else params.delete("framework");
-    }
-    // Reset to first page when filters change
+
     params.delete("page");
     router.push(`/?${params.toString()}`);
   }
 
   return (
-    <div className="flex w-full items-center gap-3 text-sm text-zinc-200">
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && updateQuery({ q })}
-        placeholder="Search library name..."
-        className="flex-1 rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 outline-none text-neutral-900 dark:text-white"
-      />
-      <select
-        value={framework}
-        onChange={(e) => {
-          const value = e.target.value;
-          setFramework(value);
-          updateQuery({ framework: value });
-        }}
-        className="rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
-      >
-        {FRAMEWORKS.map((fw) => (
-          <option key={fw} value={fw} className="text-neutral-900 dark:text-white">
-            {fw}
-          </option>
-        ))}
-      </select>
+    <div className="flex w-full items-end gap-4 text-sm text-zinc-200 flex-col xl:flex-row lg:flex-row md:flex-row">
+      <div className="flex-2 rounded-md w-full">
+        <InputGroup noRing className="dark:bg-black/60 dark:border-white/10 border shadow-none">
+          <InputGroupInput 
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && updateQuery({ q })}
+            placeholder="Search library name..."
+            className="text-neutral-900 dark:text-white" />
+          <InputGroupAddon>
+            <Search />
+          </InputGroupAddon>
+        </InputGroup>
+      </div>
 
-      <select
-        value={tag}
-        onChange={(e) => {
-          const value = e.target.value;
-          setTag(value);
-          const params = new URLSearchParams(Array.from(searchParams.entries()));
-          if (value && value !== "All") params.set("tag", value);
-          else params.delete("tag");
-          // Reset to first page when tag changes
-          params.delete("page");
-          router.push(`/?${params.toString()}`);
-        }}
-        className="rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
-      >
-        {tagOptions.map((t) => (
-          <option key={t} value={t} className="text-neutral-900 dark:text-white">
-            {t}
-          </option>
-        ))}
-      </select>
+      <div className="flex-1 flex-col items-start gap-2 justify-start w-full">
+        <p className="pb-2 dark:text-white text-neutral-900">Framework</p>
+
+        <select
+          value={framework}
+          onChange={(e) => {
+            const value = e.target.value;
+            setFramework(value);
+            const params = new URLSearchParams(Array.from(searchParams.entries()));
+            if (value && value !== "All") params.set("framework", value);
+            else params.delete("framework");
+            // Reset to first page when framework changes
+            params.delete("page");
+            router.push(`/?${params.toString()}`);
+          }}
+          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
+        >
+          {frameworkOptions.map((fw) => (
+            <option key={fw} value={fw} className="text-neutral-900 dark:text-white">
+              {fw}
+            </option>
+          ))}
+        </select>
+      </div>
+     
+      <div className="flex-1 flex-col items-start gap-2 justify-start w-full">
+        <p className="pb-2 dark:text-white text-neutral-900">Category</p>
+
+        <select
+          value={tag}
+          onChange={(e) => {
+            const value = e.target.value;
+            setTag(value);
+            const params = new URLSearchParams(Array.from(searchParams.entries()));
+            if (value && value !== "All") params.set("tag", value);
+            else params.delete("tag");
+            // Reset to first page when tag changes
+            params.delete("page");
+            router.push(`/?${params.toString()}`);
+          }}
+          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
+        >
+          {tagOptions.map((t) => (
+            <option key={t} value={t} className="text-neutral-900 dark:text-white">
+              {t}
+            </option>
+          ))}
+        </select>
+      </div> 
 
       <button
         onClick={() => updateQuery({ q })}
-        className="rounded-md dark:bg-yellow-200 px-4 py-2 cursor-pointer text-neutral-900 font-semibold bg-yellow-400"
+        className="flex-1 rounded-md dark:bg-yellow-200 px-4 py-2 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-sm w-full"
       >
         Search
       </button>

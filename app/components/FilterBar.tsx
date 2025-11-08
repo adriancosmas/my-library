@@ -91,15 +91,15 @@ export default function FilterBar() {
   return (
     <div className="flex w-full items-end gap-4 text-sm text-zinc-200 flex-col xl:flex-row lg:flex-row md:flex-row">
       <div className="flex-2 rounded-md w-full">
-        <InputGroup noRing className="dark:bg-black/60 dark:border-white/10 border shadow-none">
+        <InputGroup noRing className="dark:bg-black/60 dark:border-white/10 border shadow-none py-4.5">
           <InputGroupInput 
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && updateQuery({ q })}
             placeholder="Search library name..."
-            className="text-neutral-900 dark:text-white" />
+            className="text-neutral-900 dark:text-white text-base" />
           <InputGroupAddon>
-            <Search />
+            <Search className="mr-1"/>
           </InputGroupAddon>
         </InputGroup>
       </div>
@@ -119,7 +119,7 @@ export default function FilterBar() {
             params.delete("page");
             router.push(`/?${params.toString()}`);
           }}
-          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
+          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base"
         >
           {frameworkOptions.map((fw) => (
             <option key={fw} value={fw} className="text-neutral-900 dark:text-white">
@@ -144,7 +144,7 @@ export default function FilterBar() {
             params.delete("page");
             router.push(`/?${params.toString()}`);
           }}
-          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white"
+          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base"
         >
           {tagOptions.map((t) => (
             <option key={t} value={t} className="text-neutral-900 dark:text-white">
@@ -156,7 +156,7 @@ export default function FilterBar() {
 
       <button
         onClick={() => updateQuery({ q })}
-        className="flex-1 rounded-md dark:bg-yellow-200 px-4 py-2 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-sm w-full"
+        className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-2 xl:py-2 md:py-2 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full"
       >
         Search
       </button>

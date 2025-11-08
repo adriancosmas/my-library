@@ -3,13 +3,14 @@ import { revalidatePath } from "next/cache";
 import { getSupabaseServerClient, getSupabaseClient } from "@/lib/supabaseClient";
 import Header from "@/app/components/Header";
 import NameSlugFields from "./NameSlugFields";
+import { slugify } from "@/lib/utils";
 
 async function createLibrary(formData: FormData) {
   "use server";
   const name = String(formData.get("name") || "").trim();
-  const slug = String(formData.get("slug") || "").trim().split(" ").join("-").toLowerCase();
+  const slugInput = String(formData.get("slug") || "").trim();
   const description = String(formData.get("description") || "").trim();
-  const framework = String(formData.get("framework") || "React").trim();
+  const framework = String(formData.get("framework") || "").trim();
   const website_url = String(formData.get("website_url") || "").trim();
   const logo_url = String(formData.get("logo_url") || "").trim();
   const tagsInput = String(formData.get("tags") || "").trim();
@@ -27,9 +28,35 @@ async function createLibrary(formData: FormData) {
     redirect("/submit?error=supabase_not_configured");
   }
 
+  // Normalize slug (derived from name if slug is empty)
+  const baseSlug = slugify(slugInput || name);
+  if (!baseSlug) {
+    redirect("/submit?error=missing_slug_or_name");
+  }
+
+  // Ensure uniqueness: append -2, -3, ... if base slug is taken
+  let finalSlug = baseSlug;
+  const { data: existingSlugs, error: slugCheckError } = await client
+    .from("libraries")
+    .select("slug")
+    .ilike("slug", `${baseSlug}%`);
+  if (slugCheckError) {
+    redirect(`/submit?error=${encodeURIComponent(slugCheckError.message)}`);
+  }
+  if (existingSlugs && existingSlugs.length > 0) {
+    const taken = new Set(existingSlugs.map((row: { slug: string }) => row.slug));
+    if (taken.has(baseSlug)) {
+      let i = 2;
+      while (taken.has(`${baseSlug}-${i}`)) {
+        i++;
+      }
+      finalSlug = `${baseSlug}-${i}`;
+    }
+  }
+
   const { data: lib, error: libError } = await client
     .from("libraries")
-    .insert({ name, slug, description, framework, website_url, logo_url })
+    .insert({ name, slug: finalSlug, description, framework, website_url, logo_url })
     .select("id")
     .single();
 

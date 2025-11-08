@@ -119,7 +119,7 @@ export default function FilterBar() {
             params.delete("page");
             router.push(`/?${params.toString()}`);
           }}
-          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base"
+          className="w-full rounded-md  dark:bg-black/60 bg-white  px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base outline-1 outline-black/10 dark:outline-white/10 border-r-12 border-transparent"
         >
           {frameworkOptions.map((fw) => (
             <option key={fw} value={fw} className="text-neutral-900 dark:text-white">
@@ -144,7 +144,7 @@ export default function FilterBar() {
             params.delete("page");
             router.push(`/?${params.toString()}`);
           }}
-          className="w-full rounded-md border dark:border-white/10 dark:bg-black/60 bg-white border-black/10 px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base"
+          className="w-full rounded-md  dark:bg-black/60 bg-white px-3 py-2 text-neutral-900 dark:text-white cursor-pointer text-base outline-1 outline-black/10 dark:outline-white/10 border-r-12 border-transparent"
         >
           {tagOptions.map((t) => (
             <option key={t} value={t} className="text-neutral-900 dark:text-white">

@@ -7,9 +7,10 @@ export default function LibraryCard({ lib }: { lib: Library }) {
 
   return (
     <a href={lib.website_url} target="_blank" rel="noreferrer" className="group flex flex-col gap-3 rounded-xl border dark:border-white/10 border-black/10 dark:bg-black/30 p-4 transition-colors dark:hover:border-white/15 dark:hover:bg-white/7 hover:bg-gray-100/50">
-      <div className="flex items-center gap-3">
+      <div className="flex items-start gap-3">
         <div className="grid h-8 w-8 place-items-center rounded-md bg-white/5">
           <Image
+            loading="eager"
             src={lib.logo_url || "/next.svg"}
             alt={lib.name}
             width={30}

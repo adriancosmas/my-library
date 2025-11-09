@@ -5,6 +5,7 @@ import Header from "@/app/components/Header";
 import NameSlugFields from "./NameSlugFields";
 import { slugify } from "@/lib/utils";
 import AddTags from "./AddTags";
+import SubmitButton from "./SubmitButton";
 
 async function createLibrary(formData: FormData) {
   "use server";
@@ -130,7 +131,7 @@ export default async function SubmitPage({
 
         <div className="grid gap-2">
           <label className="text-sm font-sans font-light">Description</label>
-          <textarea name="description" rows={3} className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
+          <textarea name="description" rows={3} required className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
         </div>
 
         <div className="grid gap-2">
@@ -140,7 +141,7 @@ export default async function SubmitPage({
 
         <div className="grid gap-2">
           <label className="text-sm font-sans font-light">Website URL</label>
-          <input name="website_url" className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
+          <input name="website_url" required className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
         </div>
 
         <div className="grid gap-2">
@@ -148,6 +149,7 @@ export default async function SubmitPage({
           <input
             name="logo_url"
             placeholder="https://.../logo.png"
+            required
             className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
           />
         </div>
@@ -157,14 +159,15 @@ export default async function SubmitPage({
           <AddTags />
         </div>
         
-        <button
+        {/* <button
             type="submit"
             disabled={!isConfigured}
             className="rounded-md dark:bg-yellow-200 bg-yellow-400 px-8 py-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-neutral-900 font-semibold mt-4 text-base font-sans"
             title={!isConfigured ? "Configure Supabase in .env.local to enable submissions" : undefined}
         >
           Submit
-        </button>
+        </button> */}
+        <SubmitButton isConfigured={isConfigured} />
       </form>
       </div>
     </div>

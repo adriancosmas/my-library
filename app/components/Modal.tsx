@@ -1,6 +1,6 @@
 import {
   Dialog,
-  DialogClose,
+  DialogDescription,
   DialogContent,
   DialogTitle,
   DialogTrigger,
@@ -15,10 +15,9 @@ type ModalProps = {
 export default function Modal({ open, onClose, children }: ModalProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-        <DialogTrigger>
-        </DialogTrigger>
-        <DialogTitle>
-        </DialogTitle>
+        <DialogTrigger/>
+        <DialogTitle/>
+        <DialogDescription/>
         <DialogContent className="sm:max-w-md" showCloseButton={false} style={{ width: "fit-content" }}>
             {children}
         </DialogContent>

@@ -224,7 +224,7 @@ export default async function Home({
 
           <p className="mt-4 lg:mt-2 xl:mt-2 md:mt-2 text-sm text-zinc-400 font-sans font-light">
             curated by {' '}
-            <span className="font-medium text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200">
+            <span className="font-medium text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200 font-sans tracking-tight">
               <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer">
                 Cosmas
               </a>

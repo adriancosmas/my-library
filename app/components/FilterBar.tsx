@@ -81,7 +81,16 @@ export default function FilterBar() {
   }, []);
 
   function updateQuery(next: { q?: string; }) {
-    setOpen(true);
+
+    if(q !== ''){
+      setOpen(true);
+    }else{
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 500);
+    }
+
     const params = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (next.q !== undefined) {
@@ -116,6 +125,7 @@ export default function FilterBar() {
           value={framework}
           onChange={(e) => {
             const value = e.target.value;
+            setOpen(true)
             setFramework(value);
             const params = new URLSearchParams(Array.from(searchParams.entries()));
             if (value && value !== "All") params.set("framework", value);
@@ -141,6 +151,7 @@ export default function FilterBar() {
           value={tag}
           onChange={(e) => {
             const value = e.target.value;
+            setOpen(true)
             setTag(value);
             const params = new URLSearchParams(Array.from(searchParams.entries()));
             if (value && value !== "All") params.set("tag", value);
@@ -160,7 +171,7 @@ export default function FilterBar() {
       </div> 
 
       <button
-        disabled={!q}
+        // disabled={!q}
         onClick={() => updateQuery({ q })}
         className="flex-1 rounded-md dark:bg-yellow-200 px-4 lg:py-1.5 xl:py-1.5 md:py-1.5 py-3 cursor-pointer text-neutral-900 font-semibold bg-yellow-400 text-base w-full font-sans transition-colors disabled:cursor-default"
       >

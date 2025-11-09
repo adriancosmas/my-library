@@ -30,3 +30,19 @@ from public.libraries l
 left join public.library_tags lt on lt.library_id = l.id
 left join public.tags t on t.id = lt.tag_id
 group by l.id;
+
+-- Ensure the view uses underlying table policies and is visible to clients
+alter view public.library_with_tags set (security_invoker = true);
+
+-- Grant read access to the common Supabase roles
+grant usage on schema public to anon, authenticated;
+grant select on table public.library_with_tags to anon, authenticated;
+
+-- Ask PostgREST to refresh its schema cache so the new view is discoverable
+do $$
+begin
+  perform pg_catalog.pg_notify('pgrst','reload schema');
+exception when others then
+  -- ignore if PostgREST channel isn't available (e.g., during CI)
+  null;
+end $$;

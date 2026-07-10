@@ -7,6 +7,8 @@ import { slugify } from "@/lib/utils";
 import AddTags from "./AddTags";
 import SubmitButton from "./SubmitButton";
 
+const SUBMISSION_PIN = process.env.SUBMISSION_PIN || "181299";
+
 async function createLibrary(formData: FormData) {
   "use server";
   const name = String(formData.get("name") || "").trim();
@@ -16,11 +18,16 @@ async function createLibrary(formData: FormData) {
   const website_url = String(formData.get("website_url") || "").trim();
   const logo_url = String(formData.get("logo_url") || "").trim();
   const tagsInput = String(formData.get("tags") || "").trim();
+  const submissionPin = String(formData.get("submission_pin") || "").trim();
 
   const tags = tagsInput
     .split(",")
     .map((t) => t.trim())
     .filter(Boolean);
+
+  if (submissionPin !== SUBMISSION_PIN) {
+    redirect("/submit?error=invalid_pin");
+  }
 
   const serverClient = getSupabaseServerClient();
   const client = serverClient || getSupabaseClient();
@@ -116,7 +123,13 @@ export default async function SubmitPage({
         </div>
       )}
 
-      {error && error !== "supabase_not_configured" && (
+      {error === "invalid_pin" && (
+        <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300 font-sans">
+          Invalid PIN. Enter the correct submission PIN to add a new library.
+        </div>
+      )}
+
+      {error && error !== "supabase_not_configured" && error !== "invalid_pin" && (
         <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300 font-sans">
           {error}
         </div>

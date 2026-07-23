@@ -58,7 +58,7 @@ export default function LibraryCard({ lib }: { lib: Library }) {
           className="flex shrink-0 items-center gap-1 rounded-full px-2 py-1 text-xs transition-colors dark:hover:bg-white/10 hover:bg-black/10"
           aria-label={saved ? "Unsave tool" : "Save tool"}
         >
-          <Bookmark className={`h-3.5 w-3.5 ${saved ? "fill-current" : ""}`} />
+          <Bookmark className={`h-3.5 w-3.5 text-zinc-600 dark:text-zinc-400 ${saved ? "fill-current" : ""}`} />
         </button>
       </div>
     </div>

@@ -23,7 +23,7 @@ const CATEGORIES: { value: string; label: string }[] = [
   { value: "all", label: "All" },
   { value: "ai", label: "AI" },
   { value: "ui-components", label: "UI Components" },
-  { value: "animation", label: "Animation" },
+  { value: "icons", label: "Icons" },
   { value: "design-system", label: "Design System" },
   { value: "accessibility", label: "Accessibility" },
   { value: "enterprise", label: "Enterprise" },
@@ -43,7 +43,8 @@ export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(searchParams.get("q") || "");
 
-  const activeTag = searchParams.get("tag") || "all";
+  const isSavedView = searchParams.get("saved") === "1";
+  const activeTag = searchParams.get("tag") || "";
 
   useEffect(() => {
     setQ(searchParams.get("q") || "");
@@ -63,11 +64,13 @@ export default function Sidebar() {
       if (tag === "all") params.delete("tag");
       else params.set("tag", tag);
       params.delete("page");
+      params.delete("saved");
       router.push(`/?${params.toString()}`);
       setOpen(false);
     },
     [searchParams, router]
   );
+
 
   return (
     <>
@@ -125,7 +128,9 @@ export default function Sidebar() {
         <nav className="border-b dark:border-white/10 border-gray-200 px-3">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = item.href.includes("saved")
+              ? isSavedView
+              : pathname === "/" && !isSavedView && !activeTag;
             return (
               <Link
                 key={item.href}

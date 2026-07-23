@@ -32,7 +32,7 @@ export type HighlightItem = {
     framework: string | null;
     logo_url: string | null;
     og_image_url: string | null;
-    favicon_url: string | null;
+    favicon_url?: string | null;
     website_url: string | null;
   } | null;
 };

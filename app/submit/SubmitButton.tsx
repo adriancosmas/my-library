@@ -77,7 +77,7 @@ export default function SubmitButton({ isConfigured }: SubmitButtonProps) {
                 onClick={handleClick}
                 type="button"
                 disabled={!isConfigured || !canSubmit || isSubmitting}
-                className="rounded-md dark:bg-yellow-200 bg-yellow-400 px-8 py-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-neutral-900 font-semibold mt-4 text-base font-sans"
+                className="rounded-full dark:bg-yellow-200 bg-yellow-400 px-8 py-2 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-neutral-900 font-semibold mt-4 text-base font-sans"
                 title={
                   !isConfigured
                     ? "Configure Supabase in .env.local to enable submissions"
@@ -122,7 +122,7 @@ export default function SubmitButton({ isConfigured }: SubmitButtonProps) {
                             handleConfirmSubmit();
                           }
                         }}
-                        className="rounded-md border border-black/10 bg-white px-3 py-2 font-sans dark:border-white/10 dark:bg-black/60"
+                        className="rounded-full border border-black/10 bg-white px-3 py-2 font-sans dark:border-white/10 dark:bg-black/60"
                         placeholder="Enter PIN"
                         autoFocus
                       />
@@ -135,14 +135,14 @@ export default function SubmitButton({ isConfigured }: SubmitButtonProps) {
                       <button
                         type="button"
                         onClick={() => setOpen(false)}
-                        className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium text-neutral-900 dark:border-white/10 dark:text-white font-sans"
+                        className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-neutral-900 dark:border-white/10 dark:text-white font-sans"
                       >
                         Cancel
                       </button>
                       <button
                         type="button"
                         onClick={handleConfirmSubmit}
-                        className="inline-flex items-center justify-center rounded-md bg-yellow-400 px-4 py-2 text-sm font-semibold text-neutral-900 dark:bg-yellow-200 font-sans"
+                        className="inline-flex items-center justify-center rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-neutral-900 dark:bg-yellow-200 font-sans"
                       >
                         {isSubmitting ? (
                           <>

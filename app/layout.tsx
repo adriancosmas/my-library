@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Zalando_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Sidebar from "./components/Sidebar";
+import Providers from "./components/Providers";
 
 const zalandoSans = Zalando_Sans({  
   variable: "--font-zalando-sans",
@@ -17,17 +19,27 @@ export const metadata: Metadata = {
   description: "A directory of tools and resources curated by Cosmas.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="overflow-y-scroll">
       <body
-        className={`${zalandoSans.variable} ${geistMono.variable} antialiased`}
+        className={`${zalandoSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-white text-white`}
       >
-        {children}
+        <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
+          <Sidebar />
+          <main className="flex-1 min-h-screen pt-14 lg:pt-0">
+              <Providers>{children}</Providers>
+          </main>
+        </div>
       </body>
     </html>
   );

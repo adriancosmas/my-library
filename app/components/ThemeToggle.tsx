@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function ThemeToggle() {
+export default function ThemeToggle({ fullWidth }: { fullWidth?: boolean }) {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -34,11 +34,11 @@ export default function ThemeToggle() {
       variant="ghost"
       size="lg"
       onClick={toggleTheme}
-      className="gap-2 border dark:border-white/10 border-black/10 bg-white/5 dark:text-zinc-200 hover:bg-gray-100/50 dark:hover:bg-white/10 cursor-pointer"
+      className={`gap-2 border dark:border-white/10 border-black/10 bg-white/5 text-neutral-900 dark:text-zinc-200 hover:bg-gray-100/50 dark:hover:bg-white/10 cursor-pointer ${fullWidth ? "w-full" : ""}`}
       aria-label="Toggle color theme"
     >
       {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}
-      <span className="hidden sm:inline font-sans font-light">{isDark ? "Light" : "Dark"} mode</span>
+      <span className="font-sans font-light">{isDark ? "Light" : "Dark"} mode</span>
     </Button>
   );
 }

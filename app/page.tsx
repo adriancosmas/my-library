@@ -1,8 +1,8 @@
-import FilterBar from "./components/FilterBar";
-import LibraryCard from "./components/LibraryCard";
-import Header from "./components/Header";
+import LibraryGrid from "./components/LibraryGrid";
+import HighlightSection from "./components/HighlightSection";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
+import { getHighlights } from "@/lib/highlights";
 import type { Library, LibraryFilters } from "@/lib/types";
 import {
   Pagination,
@@ -23,7 +23,7 @@ export default async function Home({
   const params = await searchParams;
   const filters = params || {};
   const client = getSupabaseClient();
-  const PAGE_SIZE = 30;
+  const PAGE_SIZE = 15;
   let pageNum = 1;
   if (filters.page) {
     const parsed = Number(filters.page);
@@ -33,6 +33,7 @@ export default async function Home({
 
   let libraries: Library[] = [];
   let totalCount: number | null = null;
+  let supabaseLoaded = false;
 
   if (client) {
     // Build Supabase query with optional filters
@@ -43,7 +44,6 @@ export default async function Home({
       .select("*", { count: "exact", head: true });
     if (filters.q) countQuery = countQuery.ilike("name", `%${filters.q}%`);
     if (filters.framework) countQuery = countQuery.eq("framework", filters.framework);
-    if (filters.tag) countQuery = countQuery.contains("tags", [filters.tag]);
     const { count: viewCount } = await countQuery;
     if (typeof viewCount === "number") totalCount = viewCount;
 
@@ -54,8 +54,7 @@ export default async function Home({
       .order('created_at', { ascending: false });
     if (filters.q) query = query.ilike("name", `%${filters.q}%`);
     if (filters.framework) query = query.eq("framework", filters.framework);
-    if (filters.tag) query = query.contains("tags", [filters.tag]);
-    query = query.range(offset, offset + PAGE_SIZE - 1);
+    if (filters.saved !== "1" && !filters.tag) query = query.range(offset, offset + PAGE_SIZE - 1);
 
     const { data, error } = await query;
     if (error) {
@@ -67,10 +66,11 @@ export default async function Home({
       // Build optional tag-based library id filter in fallback
       let tagLibIds: string[] | null = null;
       if (filters.tag) {
+        const tag = filters.tag.toLowerCase();
         const { data: tagRow, error: tagFindError } = await client
           .from("tags")
           .select("id")
-          .eq("name", filters.tag)
+          .ilike("name", tag)
           .single();
         if (tagFindError) {
           console.warn("Fallback: tag lookup failed", tagFindError.message);
@@ -105,11 +105,12 @@ export default async function Home({
       if (filters.q) libQuery = libQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
       if (tagLibIds) libQuery = libQuery.in("id", tagLibIds);
-      libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
+      if (filters.saved !== "1") libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
       const { data: libRows, error: libError } = await libQuery;
       if (libError) {
         console.error("Supabase fallback error", libError.message);
       } else if (libRows) {
+        supabaseLoaded = true;
         const rows = libRows as any[];
         const libIds = rows.map((r) => r.id).filter(Boolean);
 
@@ -146,6 +147,7 @@ export default async function Home({
         }));
       }
     } else if (data) {
+      supabaseLoaded = true;
       libraries = (data as any[]).map((row) => ({
         id: String(row.id),
         name: row.name,
@@ -159,8 +161,18 @@ export default async function Home({
     }
   }
 
+  // Client-side tag filter (case-insensitive)
+  if (filters.tag && libraries.length > 0) {
+    const tag = filters.tag.toLowerCase().replace(/-/g, " ");
+    const all = libraries.filter((lib) =>
+      lib.tags.some((t) => t.toLowerCase() === tag)
+    );
+    totalCount = all.length;
+    libraries = filters.saved === "1" ? all : all.slice(offset, offset + PAGE_SIZE);
+  }
+
   // Fallback to sample data when no Supabase env present
-  if (!client || libraries.length === 0) {
+  if (!client || (!supabaseLoaded && libraries.length === 0)) {
     const filtered = SAMPLE_LIBRARIES.filter((lib) => {
       const matchesQ = filters.q
         ? lib.name.toLowerCase().includes(filters.q.toLowerCase())
@@ -168,18 +180,20 @@ export default async function Home({
       const matchesFw = filters.framework && filters.framework !== "All"
         ? lib.framework === filters.framework
         : true;
-      const matchesTag = filters.tag ? lib.tags.includes(filters.tag) : true;
+      const matchesTag = filters.tag ? lib.tags.some((t) => t.toLowerCase() === filters.tag!.toLowerCase().replace(/-/g, " ")) : true;
       return matchesQ && matchesFw && matchesTag;
     });
     totalCount = filtered.length;
-    libraries = filtered.slice(offset, offset + PAGE_SIZE);
+    libraries = filters.saved === "1" ? filtered : filtered.slice(offset, offset + PAGE_SIZE);
   }
+
+  const highlights = await getHighlights();
 
   const totalPages = totalCount ? Math.max(1, Math.ceil(totalCount / PAGE_SIZE)) : null;
   const baseParams = new URLSearchParams();
   if (filters.q) baseParams.set("q", filters.q);
   if (filters.framework && filters.framework !== "All") baseParams.set("framework", filters.framework);
-  if (filters.tag) baseParams.set("tag", filters.tag);
+  if (filters.tag) baseParams.set("tag", filters.tag.toLowerCase());
   const makeHref = (p: number) => {
     const params = new URLSearchParams(baseParams);
     params.set("page", String(Math.max(1, p)));
@@ -215,10 +229,9 @@ export default async function Home({
 
   return (
     <div className="min-h-screen dark:bg-black bg-white">
-      <Header />
-      <main className="mx-auto max-w-6xl px-6 py-8">
+        <div className="px-4 py-8 sm:px-6">
         <div className="mb-12">
-          <h2 className="text-4xl font-semibold dark:text-white text-neutral-900 tracking-tight font-sans">
+          <h2 className="text-2xl font-semibold dark:text-white text-neutral-900 tracking-tight font-sans sm:text-4xl">
             Just tons of libraries & tools to help your daily life
           </h2>
 
@@ -232,20 +245,11 @@ export default async function Home({
           </p>
         </div>
 
-        <FilterBar />
-        
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {libraries.map((lib) => (
-            <LibraryCard key={lib.id} lib={lib} />
-          ))}
+        {filters.saved !== "1" && <HighlightSection highlights={highlights} />}
 
-          {libraries.length === 0 && (
-            <div className="col-span-full rounded-xl border border-white/10 p-6 text-center text-zinc-400 font-sans">
-              No libraries found.
-            </div>
-          )}
-        </div>
+        <LibraryGrid libraries={libraries} />
 
+        {filters.saved !== "1" ? (
         <div className="mt-10">
           <Pagination className="text-sm">
             <PaginationContent>
@@ -279,7 +283,8 @@ export default async function Home({
             </PaginationContent>
           </Pagination>
         </div>
-      </main>
+        ) : null}
+      </div>
     </div>
   );
 }

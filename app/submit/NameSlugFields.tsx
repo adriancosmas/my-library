@@ -20,7 +20,7 @@ export default function NameSlugFields() {
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
+          className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
         />
       </div>
 
@@ -34,7 +34,7 @@ export default function NameSlugFields() {
           onChange={(e) => setSlug(slugify(e.target.value))}
           onBlur={(e) => setSlug(slugify(e.target.value))}
           placeholder=""
-          className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
+          className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
         />
       </div>
     </>

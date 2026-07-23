@@ -1,4 +1,4 @@
-import { Library } from "./types";
+import { Library, Highlight } from "./types";
 
 export const SAMPLE_LIBRARIES: Library[] = [
   {
@@ -12,7 +12,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/shadcn-ui/ui",
     stars: 75000,
     logo_url: "/file.svg",
-    tags: ["components", "tailwind", "radix"],
+    tags: ["components", "tailwind", "radix", "ui-components"],
   },
   {
     id: "2",
@@ -24,7 +24,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/aceternity/ui",
     stars: 12000,
     logo_url: "/globe.svg",
-    tags: ["components", "tailwind"],
+    tags: ["components", "tailwind", "ui-components"],
   },
   {
     id: "3",
@@ -36,7 +36,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/magicuidesign/magicui",
     stars: 4800,
     logo_url: "/window.svg",
-    tags: ["components", "animation", "react"],
+    tags: ["components", "animation", "react", "ai"],
   },
   {
     id: "4",
@@ -60,7 +60,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/radix-ui/primitives",
     stars: 23000,
     logo_url: "/globe.svg",
-    tags: ["primitives", "accessibility", "react"],
+    tags: ["primitives", "accessibility", "react", "ui-components"],
   },
   {
     id: "6",
@@ -73,7 +73,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/tailwindlabs/headlessui",
     stars: 41000,
     logo_url: "/globe.svg",
-    tags: ["components", "accessibility", "react"],
+    tags: ["components", "accessibility", "react", "ui-components"],
   },
   {
     id: "7",
@@ -85,7 +85,7 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/chakra-ui/chakra-ui",
     stars: 35000,
     logo_url: "/globe.svg",
-    tags: ["components", "react", "accessible"],
+    tags: ["components", "react", "accessibility"],
   },
   {
     id: "8",
@@ -110,7 +110,31 @@ export const SAMPLE_LIBRARIES: Library[] = [
     github_url: "https://github.com/ant-design/ant-design",
     stars: 95000,
     logo_url: "/globe.svg",
-    tags: ["components", "react", "enterprise"],
+    tags: ["components", "react", "enterprise", "ui-components"],
+  },
+  {
+    id: "10",
+    name: "OpenAI API",
+    slug: "openai-api",
+    description: "GPT-4, DALL-E, Whisper APIs for AI-powered applications",
+    framework: "API",
+    website_url: "https://openai.com",
+    github_url: "https://github.com/openai/openai-python",
+    stars: 95000,
+    logo_url: "/globe.svg",
+    tags: ["ai", "api"],
+  },
+  {
+    id: "11",
+    name: "LangChain",
+    slug: "langchain",
+    description: "Build context-aware reasoning applications with LLMs",
+    framework: "Python",
+    website_url: "https://langchain.com",
+    github_url: "https://github.com/langchain-ai/langchain",
+    stars: 110000,
+    logo_url: "/globe.svg",
+    tags: ["ai", "api", "python"],
   },
 ];
 
@@ -128,4 +152,51 @@ export const TAGS = [
   "accessibility",
   "accessible",
   "enterprise",
+];
+
+export const SAMPLE_HIGHLIGHTS: Highlight[] = [
+  {
+    id: "hl-1",
+    title: "Editor's Picks",
+    description: "Top-tier component libraries every React developer should know",
+    created_at: new Date().toISOString(),
+    items: [
+      {
+        id: "hi-1", highlight_id: "hl-1", library_id: "1",
+        library: { id: "1", name: "shadcn/ui", slug: "shadcn-ui", framework: "React", logo_url: "/file.svg", og_image_url: "/file.svg", website_url: "https://ui.shadcn.com" },
+      },
+      {
+        id: "hi-2", highlight_id: "hl-1", library_id: "5",
+        library: { id: "5", name: "Radix UI", slug: "radix-ui", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://www.radix-ui.com" },
+      },
+      {
+        id: "hi-3", highlight_id: "hl-1", library_id: "6",
+        library: { id: "6", name: "Headless UI", slug: "headless-ui", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://headlessui.com" },
+      },
+    ],
+  },
+  {
+    id: "hl-2",
+    title: "Design Systems",
+    description: "Full-featured design systems for scalable applications",
+    created_at: new Date().toISOString(),
+    items: [
+      {
+        id: "hi-4", highlight_id: "hl-2", library_id: "4",
+        library: { id: "4", name: "Tamagui", slug: "tamagui", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://tamagui.dev" },
+      },
+      {
+        id: "hi-5", highlight_id: "hl-2", library_id: "7",
+        library: { id: "7", name: "Chakra UI", slug: "chakra-ui", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://chakra-ui.com" },
+      },
+      {
+        id: "hi-6", highlight_id: "hl-2", library_id: "8",
+        library: { id: "8", name: "Mantine", slug: "mantine", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://mantine.dev" },
+      },
+      {
+        id: "hi-7", highlight_id: "hl-2", library_id: "9",
+        library: { id: "9", name: "Ant Design", slug: "ant-design", framework: "React", logo_url: "/globe.svg", og_image_url: "/globe.svg", website_url: "https://ant.design" },
+      },
+    ],
+  },
 ];

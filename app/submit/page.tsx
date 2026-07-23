@@ -144,17 +144,17 @@ export default async function SubmitPage({
 
         <div className="grid gap-2">
           <label className="text-sm font-sans font-light">Description</label>
-          <textarea name="description" rows={3} required className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
+          <textarea name="description" rows={3} required className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-sans font-light">Framework</label>
-          <input name="framework" className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
+          <input name="framework" className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
         </div>
 
         <div className="grid gap-2">
           <label className="text-sm font-sans font-light">Website URL</label>
-          <input name="website_url" required className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
+          <input name="website_url" required className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans" />
         </div>
 
         <div className="grid gap-2">
@@ -163,7 +163,7 @@ export default async function SubmitPage({
             name="logo_url"
             placeholder="https://.../logo.png"
             required
-            className="rounded-md border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
+            className="rounded-full border border-black/10 dark:border-white/10 dark:bg-black/60 bg-white px-3 py-2 font-sans"
           />
         </div>
 

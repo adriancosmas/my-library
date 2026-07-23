@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Zalando_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
@@ -35,7 +36,7 @@ export default function RootLayout({
         className={`${zalandoSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-white text-white`}
       >
         <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
-          <Sidebar />
+          <Suspense fallback={null}><Sidebar /></Suspense>
           <main className="flex-1 min-h-screen pt-14 lg:pt-0">
               <Providers>{children}</Providers>
           </main>

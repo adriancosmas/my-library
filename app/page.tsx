@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import LibraryGrid from "./components/LibraryGrid";
 import HighlightSection from "./components/HighlightSection";
 import { getSupabaseClient } from "@/lib/supabaseClient";
@@ -247,7 +248,7 @@ export default async function Home({
 
         {filters.saved !== "1" && <HighlightSection highlights={highlights} />}
 
-        <LibraryGrid libraries={libraries} />
+        <Suspense fallback={null}><LibraryGrid libraries={libraries} /></Suspense>
 
         {filters.saved !== "1" ? (
         <div className="mt-10">

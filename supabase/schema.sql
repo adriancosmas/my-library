@@ -31,6 +31,102 @@ left join public.library_tags lt on lt.library_id = l.id
 left join public.tags t on t.id = lt.tag_id
 group by l.id;
 
+-- Enable RLS on libraries table
+alter table public.libraries enable row level security;
+
+-- Policy: Allow authenticated users to SELECT all libraries
+create policy "Authenticated users can view libraries"
+  on public.libraries
+  for select
+  to authenticated
+  using (true);
+
+-- Policy: Allow authenticated users to INSERT new libraries
+create policy "Authenticated users can insert libraries"
+  on public.libraries
+  for insert
+  to authenticated
+  with check (true);
+
+-- Policy: Allow authenticated users to UPDATE libraries
+create policy "Authenticated users can update libraries"
+  on public.libraries
+  for update
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Policy: Allow authenticated users to DELETE libraries
+create policy "Authenticated users can delete libraries"
+  on public.libraries
+  for delete
+  to authenticated
+  using (true);
+
+-- Enable RLS on tags table
+alter table public.tags enable row level security;
+
+-- Policy: Allow authenticated users to SELECT all tags
+create policy "Authenticated users can view tags"
+  on public.tags
+  for select
+  to authenticated
+  using (true);
+
+-- Policy: Allow authenticated users to INSERT new tags
+create policy "Authenticated users can insert tags"
+  on public.tags
+  for insert
+  to authenticated
+  with check (true);
+
+-- Policy: Allow authenticated users to UPDATE tags
+create policy "Authenticated users can update tags"
+  on public.tags
+  for update
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Policy: Allow authenticated users to DELETE tags
+create policy "Authenticated users can delete tags"
+  on public.tags
+  for delete
+  to authenticated
+  using (true);
+
+-- Enable RLS on library_tags table
+alter table public.library_tags enable row level security;
+
+-- Policy: Allow authenticated users to SELECT all library_tags
+create policy "Authenticated users can view library_tags"
+  on public.library_tags
+  for select
+  to authenticated
+  using (true);
+
+-- Policy: Allow authenticated users to INSERT new library_tags
+create policy "Authenticated users can insert library_tags"
+  on public.library_tags
+  for insert
+  to authenticated
+  with check (true);
+
+-- Policy: Allow authenticated users to UPDATE library_tags
+create policy "Authenticated users can update library_tags"
+  on public.library_tags
+  for update
+  to authenticated
+  using (true)
+  with check (true);
+
+-- Policy: Allow authenticated users to DELETE library_tags
+create policy "Authenticated users can delete library_tags"
+  on public.library_tags
+  for delete
+  to authenticated
+  using (true);
+
 -- Ensure the view uses underlying table policies and is visible to clients
 alter view public.library_with_tags set (security_invoker = true);
 

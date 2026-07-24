@@ -34,7 +34,7 @@ export default function ThemeToggle({ fullWidth }: { fullWidth?: boolean }) {
       variant="ghost"
       size="lg"
       onClick={toggleTheme}
-      className={`gap-2 border dark:border-white/10 border-black/10 bg-white/5 text-neutral-900 dark:text-zinc-200 hover:bg-gray-100/50 dark:hover:bg-white/10 cursor-pointer ${fullWidth ? "w-full" : ""}`}
+      className={`rounded-sm gap-2 bg-white/5 text-neutral-900 dark:text-zinc-200 hover:bg-gray-100/50 dark:hover:bg-white/10 cursor-pointer ${fullWidth ? "w-full" : ""}`}
       aria-label="Toggle color theme"
     >
       {isDark ? <SunIcon className="h-4 w-4" /> : <MoonIcon className="h-4 w-4" />}

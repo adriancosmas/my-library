@@ -1,12 +1,9 @@
 "use client";
 
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
 import {
-  Compass,
-  Sparkles,
-  Bookmark,
   Menu,
   X,
   Search,
@@ -18,22 +15,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Palette2, Sparkle, Widget5, Compass, Bookmark, Shapes, type IconWeight } from "reicon-react";
 
-const CATEGORIES: { value: string; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "ai", label: "AI" },
-  { value: "ui-components", label: "UI Components" },
-  { value: "icons", label: "Icons" },
-  { value: "design-system", label: "Design System" },
-  { value: "accessibility", label: "Accessibility" },
-  { value: "enterprise", label: "Enterprise" },
-  { value: "primitives", label: "Primitives" },
-  { value: "cross-platform", label: "Cross-Platform" },
+const CATEGORIES: { value: string; label: string, icon?: (weight: IconWeight) => React.ReactNode }[] = [
+  // { value: "all", label: "All" },
+  { value: "ai", label: "AI", icon: (w: IconWeight) => <Sparkle size={20} weight={w} /> },
+  { value: "design", label: "Design", icon: (w: IconWeight) => <Palette2 size={20} weight={w} /> },
+  { value: "ui-components", label: "UI Components", icon: (w: IconWeight) => <Widget5 size={20} weight={w} /> },
+  { value: "icons", label: "Icons", icon: (w: IconWeight) => <Shapes size={20} weight={w} /> },
 ];
 
 const NAV_ITEMS = [
-  { href: "/", label: "Explore", icon: Compass },
-  { href: "/?saved=1", label: "Saved Tools", icon: Bookmark },
+  { href: "/", label: "Explore", icon: (w: IconWeight) => <Compass size={20} weight={w} /> },
+  { href: "/?saved=1", label: "Saved Tools", icon: (w: IconWeight) => <Bookmark size={20} weight={w} /> },
 ];
 
 export default function Sidebar() {
@@ -78,6 +72,7 @@ export default function Sidebar() {
         <Link href="/" className="text-2xl font-semibold tracking-tighter dark:text-white text-neutral-900 font-sans">
           mY Directory.
         </Link>
+
         <button
           onClick={() => setOpen(!open)}
           className="flex h-10 w-10 items-center justify-center rounded-full dark:bg-white/10 bg-black/10 backdrop-blur-lg"
@@ -103,6 +98,7 @@ export default function Sidebar() {
           <Link href="/" className="text-3xl font-semibold tracking-tighter dark:text-white text-zinc-900 font-sans">
             mY Directory.
           </Link>
+
           <button
             onClick={() => setOpen(false)}
             className="flex h-8 w-8 items-center justify-center rounded-full dark:bg-white/10 bg-black/10 lg:hidden"
@@ -115,6 +111,7 @@ export default function Sidebar() {
         <div className="border-b dark:border-white/10 border-gray-200 px-3 py-3">
           <div className="flex items-center gap-2 rounded-full dark:bg-white/5 bg-gray-100 px-3 py-2 ring-1 dark:ring-white/10 ring-gray-200 focus-within:dark:ring-white/30 focus-within:ring-gray-400">
             <Search className="h-4 w-4 shrink-0 dark:text-zinc-500 text-zinc-400" />
+            
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -125,9 +122,8 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <nav className="border-b dark:border-white/10 border-gray-200 px-3">
+        <nav className="border-b dark:border-white/10 border-gray-200 px-3 py-3">
           {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
             const isActive = item.href.includes("saved")
               ? isSavedView
               : pathname === "/" && !isSavedView && !activeTag;
@@ -136,13 +132,14 @@ export default function Sidebar() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors font-sans my-3 ${
+                className={`flex items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors font-sans my-1 ${
                   isActive
                     ? "dark:bg-white/10 dark:text-white bg-black/10 text-zinc-900 font-medium"
                     : "dark:text-zinc-400 text-zinc-500 dark:hover:text-white hover:text-zinc-900 dark:hover:bg-white/5 hover:bg-black/5"
                 }`}
               >
-                <Icon className="h-4 w-4" />
+                {item.icon(isActive ? "Filled" : "Outline")}
+                {/* <Icon className="h-4 w-4" /> */}
                 {item.label}
               </Link>
             );
@@ -152,24 +149,23 @@ export default function Sidebar() {
         <div className="flex-1 overflow-y-auto px-3 py-3">
           <Accordion type="single" collapsible defaultValue="categories">
             <AccordionItem value="categories" className="border-b-0">
-              <AccordionTrigger className="font-sans px-3 dark:text-zinc-500 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700">
+              <AccordionTrigger className="font-sans px-3 dark:text-zinc-500 text-zinc-600 dark:hover:text-zinc-300 hover:text-zinc-700 cursor-pointer">
                 Categories
               </AccordionTrigger>
 
               <AccordionContent>
-                <div className="space-y-0.5">
+                <div className="space-y-1">
                   {CATEGORIES.map((cat) => (
                     <button
                       key={cat.value}
                       onClick={() => handleTagClick(cat.value)}
-                      className={`flex w-full items-center gap-3 rounded-lg px-3 py-1.5 text-sm transition-colors font-sans ${
+                      className={`cursor-pointer flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors font-sans ${
                         activeTag === cat.value
                           ? "dark:bg-white/10 dark:text-white bg-black/10 text-zinc-900 font-medium"
                           : "dark:text-zinc-400 text-zinc-500 dark:hover:text-white hover:text-zinc-900 dark:hover:bg-white/5 hover:bg-black/5"
                       }`}
                     >
-                      <Sparkles className="h-4 w-4 shrink-0" />
-                      {cat.label}
+                      {cat.icon?.(activeTag === cat.value ? "Filled" : "Outline")} {cat.label}
                     </button>
                   ))}
                 </div>

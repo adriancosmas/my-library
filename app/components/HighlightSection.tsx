@@ -4,6 +4,8 @@ import Image from "next/image";
 export default function HighlightSection({ highlights }: { highlights: Highlight[] }) {
   if (highlights.length === 0) return null;
 
+  // console.log(highlights);
+
   return (
     <section className="mb-16 space-y-10">
       {highlights.map((hl) => (
@@ -24,16 +26,19 @@ export default function HighlightSection({ highlights }: { highlights: Highlight
               if (!item.library) return null;
               const lib = item.library;
               const imgSrc = lib.og_image_url || lib.favicon_url || "/next.svg";
+              const externalUrl = lib.website_url?.includes("?")
+                ? `${lib.website_url}&ref=cosudirectory`
+                : `${lib.website_url || "#"}?ref=cosudirectory`;
 
               return (
                 <a
                   key={item.id}
-                  href={lib.website_url || "#"}
+                  href={externalUrl}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex flex-col overflow-hidden rounded-md border dark:border-white/10 border-black/10 dark:bg-black/30 bg-white transition-colors dark:hover:border-white/15 dark:hover:bg-white/7 hover:bg-gray-100/50"
                 >
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/5 dark:bg-white/5">
+                  <div className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5">
                     <Image
                       src={imgSrc}
                       alt={lib.name}
@@ -59,7 +64,7 @@ export default function HighlightSection({ highlights }: { highlights: Highlight
                         {lib.name}
                       </span>
                       <span className="text-xs text-zinc-400 font-sans font-light">
-                        {lib.framework || "Tools"}
+                        {lib.category || "Tools"}
                       </span>
                     </div>
                   </div>

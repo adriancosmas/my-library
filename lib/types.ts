@@ -28,6 +28,8 @@ export type HighlightItem = {
   library: {
     id: string;
     name: string;
+    description: string;
+    category: string;
     slug: string;
     framework: string | null;
     logo_url: string | null;

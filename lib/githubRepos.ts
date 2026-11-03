@@ -2,21 +2,36 @@ import { unstable_cache } from "next/cache";
 import { getSupabaseClient } from "./supabaseClient";
 import type { GithubRepo } from "./types";
 
-const COLUMNS =
-  "id, name, github_author, github_url, github_stars, subcategory, description, logo_url, og_image_url, created_at";
+// The view's column list is frozen when it was created, so newer columns may
+// be absent; select "*" and fill gaps from github_url instead of erroring.
+function normalize(r: GithubRepo): GithubRepo {
+  const owner = r.github_url?.match(/github\.com\/([^/]+)/i)?.[1] ?? null;
+  return {
+    ...r,
+    github_author: r.github_author ?? owner,
+    github_stars: r.github_stars ?? null,
+    subcategory: r.subcategory ?? null,
+    logo_url: r.logo_url ?? (owner ? `https://github.com/${owner}.png?size=64` : null),
+  };
+}
 
 // Throws on failure so unstable_cache never stores an error for the revalidate window.
 const fetchRepos = unstable_cache(
   async (): Promise<GithubRepo[]> => {
     const client = getSupabaseClient();
     if (!client) throw new Error("Supabase env vars missing");
-    const { data, error } = await client
-      .from("libraries")
-      .select(COLUMNS)
-      .eq("framework", "GitHub Repository")
-      .order("created_at", { ascending: false });
-    if (error) throw new Error(error.message);
-    return (data ?? []) as GithubRepo[];
+    // `libraries` has every GitHub column; the view only has the columns that
+    // existed when it was created, so it is just a fallback.
+    for (const table of ["libraries", "library_with_tags"]) {
+      const { data, error } = await client
+        .from(table)
+        .select("*")
+        .eq("framework", "GitHub Repository")
+        .order("created_at", { ascending: false });
+      if (!error && data && data.length > 0) return (data as unknown as GithubRepo[]).map(normalize);
+      if (table === "library_with_tags" && error) throw new Error(error.message);
+    }
+    return [];
   },
   ["github-repos"],
   { revalidate: 3600 }

@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import LibraryGrid from "./components/LibraryGrid";
 import HighlightSection from "./components/HighlightSection";
+import GithubRepoSection from "./components/GithubRepoSection";
+import { getGithubRepos } from "@/lib/githubRepos";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
 import { getHighlights } from "@/lib/highlights";
@@ -189,6 +191,17 @@ export default async function Home({
   }
 
   const highlights = await getHighlights();
+  const githubView = filters.github === "1";
+  const github = filters.saved !== "1" ? await getGithubRepos() : null;
+  if (github && filters.q) {
+    const needle = filters.q.toLowerCase();
+    github.repos = github.repos.filter((r) =>
+      [r.name, r.github_author, r.description].some((v) => v?.toLowerCase().includes(needle))
+    );
+  }
+  const githubParams = new URLSearchParams();
+  for (const [k, v] of Object.entries(filters)) if (typeof v === "string" && v) githubParams.set(k, v);
+  const githubGpage = Number(filters.gpage);
 
   const totalPages = totalCount ? Math.max(1, Math.ceil(totalCount / PAGE_SIZE)) : null;
   const baseParams = new URLSearchParams();
@@ -246,11 +259,11 @@ export default async function Home({
           </p>
         </div>
 
-        {filters.saved !== "1" && <HighlightSection highlights={highlights} />}
+        {filters.saved !== "1" && !githubView && <HighlightSection highlights={highlights} />}
 
-        <Suspense fallback={null}><LibraryGrid libraries={libraries} /></Suspense>
+        {!githubView && <Suspense fallback={null}><LibraryGrid libraries={libraries} /></Suspense>}
 
-        {filters.saved !== "1" ? (
+        {filters.saved !== "1" && !githubView ? (
         <div className="mt-10">
           <Pagination className="text-sm">
             <PaginationContent>
@@ -285,6 +298,16 @@ export default async function Home({
           </Pagination>
         </div>
         ) : null}
+
+        {github && (
+          <GithubRepoSection
+            repos={github.repos}
+            error={github.error}
+            page={Number.isFinite(githubGpage) && githubGpage > 0 ? Math.floor(githubGpage) : 1}
+            sub={filters.sub}
+            params={githubParams}
+          />
+        )}
       </div>
     </div>
   );

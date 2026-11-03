@@ -15,7 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Palette2, Sparkle, Widget5, Compass, Bookmark, Shapes, type IconWeight } from "reicon-react";
+import { Palette2, Sparkle, Widget5, Compass, Bookmark, Shapes, Code2, type IconWeight } from "reicon-react";
 
 const CATEGORIES: { value: string; label: string, icon?: (weight: IconWeight) => React.ReactNode }[] = [
   // { value: "all", label: "All" },
@@ -39,6 +39,7 @@ export default function Sidebar() {
 
   const isSavedView = searchParams.get("saved") === "1";
   const activeTag = searchParams.get("tag") || "";
+  const isGithubView = searchParams.get("github") === "1";
 
   useEffect(() => {
     setQ(searchParams.get("q") || "");
@@ -52,6 +53,15 @@ export default function Sidebar() {
     router.push(`/?${params.toString()}`);
   }, [q, searchParams, router]);
 
+  const handleGithubClick = useCallback(() => {
+    const params = new URLSearchParams();
+    const q = searchParams.get("q");
+    if (q) params.set("q", q);
+    params.set("github", "1");
+    router.push(`/?${params.toString()}`);
+    setOpen(false);
+  }, [searchParams, router]);
+
   const handleTagClick = useCallback(
     (tag: string) => {
       const params = new URLSearchParams(Array.from(searchParams.entries()));
@@ -59,6 +69,9 @@ export default function Sidebar() {
       else params.set("tag", tag);
       params.delete("page");
       params.delete("saved");
+      params.delete("github");
+      params.delete("gpage");
+      params.delete("sub");
       router.push(`/?${params.toString()}`);
       setOpen(false);
     },
@@ -126,7 +139,7 @@ export default function Sidebar() {
           {NAV_ITEMS.map((item) => {
             const isActive = item.href.includes("saved")
               ? isSavedView
-              : pathname === "/" && !isSavedView && !activeTag;
+              : pathname === "/" && !isSavedView && !activeTag && !isGithubView;
             return (
               <Link
                 key={item.href}
@@ -168,6 +181,17 @@ export default function Sidebar() {
                       {cat.icon?.(activeTag === cat.value ? "Filled" : "Outline")} {cat.label}
                     </button>
                   ))}
+                  <button
+                    onClick={handleGithubClick}
+                    aria-current={isGithubView ? "page" : undefined}
+                    className={`cursor-pointer flex w-full items-center gap-3 rounded-sm px-3 py-2 text-sm transition-colors font-sans ${
+                      isGithubView
+                        ? "dark:bg-white/10 dark:text-white bg-black/10 text-zinc-900 font-medium"
+                        : "dark:text-zinc-400 text-zinc-500 dark:hover:text-white hover:text-zinc-900 dark:hover:bg-white/5 hover:bg-black/5"
+                    }`}
+                  >
+                    <Code2 size={20} weight={isGithubView ? "Filled" : "Outline"} /> Github Repository
+                  </button>
                 </div>
               </AccordionContent>
             </AccordionItem>

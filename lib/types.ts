@@ -19,6 +19,9 @@ export type LibraryFilters = {
   tag?: string;
   page?: string;
   saved?: string;
+  github?: string;
+  gpage?: string;
+  sub?: string;
 };
 
 export type HighlightItem = {
@@ -45,4 +48,17 @@ export type Highlight = {
   description: string;
   created_at: string;
   items: HighlightItem[];
+};
+
+export type GithubRepo = {
+  id: string;
+  name: string;
+  github_author: string | null;
+  github_url: string | null;
+  github_stars: number | null;
+  subcategory: string | null;
+  description: string | null;
+  logo_url: string | null;
+  og_image_url: string | null;
+  created_at: string;
 };

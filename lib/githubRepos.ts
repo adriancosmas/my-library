@@ -26,7 +26,7 @@ const fetchRepos = unstable_cache(
       const { data, error } = await client
         .from(table)
         .select("*")
-        .eq("framework", "GitHub Repository")
+        .eq("framework", GITHUB_FRAMEWORK)
         .order("created_at", { ascending: false });
       if (!error && data && data.length > 0) return (data as unknown as GithubRepo[]).map(normalize);
       if (table === "library_with_tags" && error) throw new Error(error.message);
@@ -46,6 +46,7 @@ export async function getGithubRepos(): Promise<{ repos: GithubRepo[]; error: bo
   }
 }
 
+export const GITHUB_FRAMEWORK = "GitHub Repository";
 export const GITHUB_PAGE_SIZE = 9;
 export const GITHUB_FALLBACK_GROUP = "Other";
 

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import LibraryGrid from "./components/LibraryGrid";
 import HighlightSection from "./components/HighlightSection";
 import GithubRepoSection from "./components/GithubRepoSection";
-import { getGithubRepos } from "@/lib/githubRepos";
+import { getGithubRepos, GITHUB_FRAMEWORK } from "@/lib/githubRepos";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
 import { getHighlights } from "@/lib/highlights";
@@ -44,7 +44,8 @@ export default async function Home({
     // Count query on view
     let countQuery = client
       .from("library_with_tags")
-      .select("*", { count: "exact", head: true });
+      .select("*", { count: "exact", head: true })
+      .neq("framework", GITHUB_FRAMEWORK);
     if (filters.q) countQuery = countQuery.ilike("name", `%${filters.q}%`);
     if (filters.framework) countQuery = countQuery.eq("framework", filters.framework);
     const { count: viewCount } = await countQuery;
@@ -54,6 +55,7 @@ export default async function Home({
     let query = client
       .from("library_with_tags")
       .select("*")
+      .neq("framework", GITHUB_FRAMEWORK)
       .order('created_at', { ascending: false });
     if (filters.q) query = query.ilike("name", `%${filters.q}%`);
     if (filters.framework) query = query.eq("framework", filters.framework);
@@ -97,14 +99,19 @@ export default async function Home({
       // Count on base table (apply q/framework and tag via id filter)
       let libCountQuery = client
         .from("libraries")
-        .select("*", { count: "exact", head: true });
+        .select("*", { count: "exact", head: true })
+        .neq("framework", GITHUB_FRAMEWORK);
       if (filters.q) libCountQuery = libCountQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libCountQuery = libCountQuery.eq("framework", filters.framework);
       if (tagLibIds) libCountQuery = libCountQuery.in("id", tagLibIds);
       const { count: libCount } = await libCountQuery;
       if (typeof libCount === "number") totalCount = libCount;
 
-      let libQuery = client.from("libraries").select("*").order('created_at', { ascending: false });
+      let libQuery = client
+        .from("libraries")
+        .select("*")
+        .neq("framework", GITHUB_FRAMEWORK)
+        .order('created_at', { ascending: false });
       if (filters.q) libQuery = libQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
       if (tagLibIds) libQuery = libQuery.in("id", tagLibIds);

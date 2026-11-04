@@ -21,7 +21,7 @@ type Props = {
 };
 
 const chipBase =
-  "rounded-full px-3 py-1 text-xs font-sans transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-neutral-900 dark:focus-visible:outline-white";
+  "inline-flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors";
 
 export default function GithubRepoSection({ repos, error, page, sub, params }: Props) {
   const href = (overrides: { gpage?: number; sub?: string | null }) => {
@@ -45,23 +45,23 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
   return (
     <section id="github-repos" className="mt-16 scroll-mt-20" aria-labelledby="github-repos-heading">
       <div className="mb-4">
-        <h3
+        <h2
           id="github-repos-heading"
-          className="text-xl font-semibold text-neutral-900 dark:text-white font-sans tracking-tight"
+          className="text-[22px] font-semibold leading-7 tracking-tight text-foreground"
         >
           GitHub Repositories
-        </h3>
-        <p className="mt-1 text-sm text-zinc-400 font-sans font-light">
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
           Open source repos worth a star.
         </p>
       </div>
 
       {error ? (
-        <p role="status" className="text-sm text-zinc-500 font-sans font-light">
+        <p role="status" className="text-sm text-destructive">
           Could not load repositories right now. Try again later.
         </p>
       ) : repos.length === 0 ? (
-        <p className="text-sm text-zinc-500 font-sans font-light">No repositories yet.</p>
+        <p className="text-sm text-muted-foreground">No repositories yet.</p>
       ) : (
         <>
           <nav className="mb-6 flex flex-wrap gap-2" aria-label="Filter by subcategory">
@@ -75,8 +75,8 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
                   aria-current={selected ? "true" : undefined}
                   className={`${chipBase} ${
                     selected
-                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                      : "bg-black/5 text-zinc-600 hover:bg-black/10 dark:bg-white/10 dark:text-zinc-300 dark:hover:bg-white/15"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground hover:bg-accent"
                   }`}
                 >
                   {name ?? "All"}
@@ -86,7 +86,7 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
           </nav>
 
           {visible.length === 0 ? (
-            <p className="text-sm text-zinc-500 font-sans font-light">No repositories match.</p>
+            <p className="text-sm text-muted-foreground">No repositories match.</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((repo) => (
@@ -102,12 +102,12 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
                   <PaginationItem>
                     <PaginationPrevious
                       href={current > 1 ? href({ sub: undefined, gpage: current - 1 }) : undefined}
-                      className={current <= 1 ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
+                      className={current <= 1 ? "pointer-events-none opacity-50" : undefined}
                     />
                   </PaginationItem>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                     <PaginationItem key={n}>
-                      <PaginationLink href={href({ gpage: n })} isActive={n === current} className="font-sans">
+                      <PaginationLink href={href({ gpage: n })} isActive={n === current} className="tabular-nums">
                         {n}
                       </PaginationLink>
                     </PaginationItem>
@@ -115,7 +115,7 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
                   <PaginationItem>
                     <PaginationNext
                       href={current < totalPages ? href({ sub: undefined, gpage: current + 1 }) : undefined}
-                      className={current >= totalPages ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
+                      className={current >= totalPages ? "pointer-events-none opacity-50" : undefined}
                     />
                   </PaginationItem>
                 </PaginationContent>

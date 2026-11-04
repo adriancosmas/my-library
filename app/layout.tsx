@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Zalando_Sans, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import Providers from "./components/Providers";
 
-const zalandoSans = Zalando_Sans({  
-  variable: "--font-zalando-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -37,9 +33,7 @@ export default function RootLayout({
           __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`
         }} />
       </head>
-      <body
-        className={`${zalandoSans.variable} ${geistMono.variable} antialiased dark:bg-black bg-white text-white`}
-      >
+      <body className={`${inter.variable} antialiased`}>
         <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
           <Suspense fallback={null}><Sidebar /></Suspense>
           <main className="flex-1 min-h-screen pt-14 lg:pt-0">

@@ -11,11 +11,11 @@ export default function HighlightSection({ highlights }: { highlights: Highlight
       {highlights.map((hl) => (
         <div key={hl.id}>
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-neutral-900 dark:text-white font-sans tracking-tight">
+            <h2 className="text-[22px] font-semibold leading-7 tracking-tight text-foreground">
               {hl.title}
-            </h3>
+            </h2>
             {hl.description ? (
-              <p className="mt-1 text-sm text-zinc-400 font-sans font-light">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {hl.description}
               </p>
             ) : null}
@@ -36,20 +36,20 @@ export default function HighlightSection({ highlights }: { highlights: Highlight
                   href={externalUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="group flex flex-col overflow-hidden rounded-md border dark:border-white/10 border-black/10 dark:bg-black/30 bg-white transition-colors dark:hover:border-white/15 dark:hover:bg-white/7 hover:bg-gray-100/50"
+                  className="group flex flex-col overflow-hidden rounded-md bg-card transition-colors hover:bg-secondary"
                 >
-                  <div className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5">
+                  <div className="relative aspect-video w-full overflow-hidden bg-secondary">
                     <Image
                       src={imgSrc}
                       alt={lib.name}
                       fill
-                      className="object-cover transition-transform group-hover:scale-105"
+                      className="object-cover"
                       unoptimized
                     />
                   </div>
                   <div className="flex items-center gap-3 p-4">
                     {lib.logo_url ? (
-                      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-white/5">
+                      <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-white">
                         <Image
                           src={lib.logo_url}
                           alt=""
@@ -60,10 +60,10 @@ export default function HighlightSection({ highlights }: { highlights: Highlight
                       </div>
                     ) : null}
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-neutral-900 dark:text-white font-sans">
+                      <span className="text-sm font-medium text-foreground">
                         {lib.name}
                       </span>
-                      <span className="text-xs text-zinc-400 font-sans font-light">
+                      <span className="text-xs text-muted-foreground">
                         {lib.category || "Tools"}
                       </span>
                     </div>

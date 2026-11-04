@@ -26,7 +26,7 @@ export default function LibraryGrid({ libraries }: { libraries: Library[] }) {
         ))}
 
         {mounted && filtered.length === 0 && (
-          <div className="col-span-full rounded-md border border-white/10 p-6 text-center text-zinc-400 font-sans">
+          <div className="col-span-full rounded-md bg-card p-6 text-center text-sm text-muted-foreground">
             {showSaved ? "No saved tools yet." : "No libraries found."}
           </div>
         )}

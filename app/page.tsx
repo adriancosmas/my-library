@@ -249,20 +249,18 @@ export default async function Home({
   };
 
   return (
-    <div className="min-h-screen dark:bg-black bg-white">
+    <div className="min-h-screen">
         <div className="px-4 py-8 sm:px-6">
         <div className="mb-12">
-          <h2 className="text-2xl font-semibold dark:text-white text-neutral-900 tracking-tight font-sans sm:text-4xl">
+          <h1 className="max-w-[26ch] text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-[32px] sm:leading-[38px]">
             Just tons of libraries & tools to help your daily life
-          </h2>
+          </h1>
 
-          <p className="mt-4 lg:mt-2 xl:mt-2 md:mt-2 text-sm text-zinc-400 font-sans font-light">
+          <p className="mt-3 text-sm text-muted-foreground">
             curated by {' '}
-            <span className="font-medium text-neutral-900 dark:text-white hover:text-yellow-400 transition-colors dark:hover:text-yellow-200 font-sans tracking-tight">
-              <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer">
-                Cosmas
-              </a>
-            </span>
+            <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground underline decoration-primary decoration-2 underline-offset-4">
+              Cosmas
+            </a>
           </p>
         </div>
 
@@ -277,7 +275,7 @@ export default async function Home({
               <PaginationItem>
                 <PaginationPrevious
                   href={hasPrev ? makeHref(pageNum - 1) : undefined}
-                  className={!hasPrev ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
+                  className={!hasPrev ? "pointer-events-none opacity-50" : undefined}
                 />
               </PaginationItem>
 
@@ -288,7 +286,7 @@ export default async function Home({
                   </PaginationItem>
                 ) : (
                   <PaginationItem key={item}>
-                    <PaginationLink href={makeHref(item)} isActive={item === pageNum} className="font-sans">
+                    <PaginationLink href={makeHref(item)} isActive={item === pageNum} className="tabular-nums">
                       {item}
                     </PaginationLink>
                   </PaginationItem>
@@ -298,7 +296,7 @@ export default async function Home({
               <PaginationItem>
                 <PaginationNext
                   href={hasNext ? makeHref(pageNum + 1) : undefined}
-                  className={!hasNext ? "pointer-events-none opacity-50 text-neutral-500 font-semibold font-sans" : undefined}
+                  className={!hasNext ? "pointer-events-none opacity-50" : undefined}
                 />
               </PaginationItem>
             </PaginationContent>

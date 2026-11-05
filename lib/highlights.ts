@@ -10,6 +10,7 @@ export async function getHighlights(): Promise<Highlight[]> {
   const { data, error } = await client
     .from("highlights")
     .select("*")
+    .eq("hidden", false)
     .order("created_at", { ascending: false });
 
   if (error || !data) {

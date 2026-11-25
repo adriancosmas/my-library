@@ -1,3 +1,4 @@
+import { Hero } from "./components/Hero";
 import { Suspense } from "react";
 import LibraryGrid from "./components/LibraryGrid";
 import HighlightSection from "./components/HighlightSection";
@@ -267,18 +268,7 @@ export default async function Home({
     <div className="min-h-screen">
         <div className="px-4 py-8 sm:px-6">
         {filters.saved !== "1" && (
-        <div className="mb-12">
-          <h1 className="max-w-[26ch] text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-[32px] sm:leading-[38px]">
-            Just tons of libraries & tools to help your daily life
-          </h1>
-
-          <p className="mt-3 text-sm text-muted-foreground">
-            curated by {' '}
-            <a href="https://cosmas.is-a.dev" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground underline decoration-primary decoration-2 underline-offset-4">
-              Cosmas
-            </a>
-          </p>
-        </div>
+        <Hero />
         )}
 
         {filters.saved !== "1" && !githubView && <HighlightSection highlights={highlights} />}

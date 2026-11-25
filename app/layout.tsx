@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
+import PageViewTracker from "./components/PageViewTracker";
 import Providers from "./components/Providers";
 import { SITE_URL, SITE_NAME } from "@/lib/site";
 import { getAllLibraries, topTags } from "@/lib/libraries";
@@ -45,6 +46,7 @@ export default async function RootLayout({
       <body className={`${inter.variable} antialiased`}>
         <div className="mx-auto flex min-h-screen w-full max-w-[1600px]">
           <Suspense fallback={null}><Sidebar tags={tags} /></Suspense>
+          <PageViewTracker />
           <main className="flex-1 min-h-screen pt-14 lg:pt-0">
               <Providers>{children}</Providers>
           </main>

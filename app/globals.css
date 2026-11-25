@@ -63,7 +63,7 @@
   --destructive: oklch(0.55 0.21 27);
   --border: oklch(0.9 0.006 95);
   --input: oklch(0.9 0.006 95);
-  --ring: oklch(0.2 0.01 95);
+  --ring: oklch(0.86 0.17 95);
 }
 
 .dark {
@@ -84,7 +84,7 @@
   --destructive: oklch(0.7 0.19 25);
   --border: oklch(0.3 0.006 95);
   --input: oklch(0.3 0.006 95);
-  --ring: oklch(0.97 0.004 95);
+  --ring: oklch(0.84 0.16 95);
 }
 
 @layer base {
@@ -118,3 +118,30 @@
     }
   }
 }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.thin-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.thin-scrollbar:hover {
+  scrollbar-color: var(--primary) transparent;
+}
+.thin-scrollbar::-webkit-scrollbar { width: 8px; }
+.thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: var(--border);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+.thin-scrollbar::-webkit-scrollbar-thumb:hover,
+.thin-scrollbar:hover::-webkit-scrollbar-thumb { background-color: var(--primary); }

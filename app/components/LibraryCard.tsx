@@ -1,9 +1,12 @@
 "use client"
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Library } from "@/lib/types";
-import { Bookmark } from "lucide-react";
+import { Bookmark, ArrowUpRight } from "lucide-react";
+import VisitLink from "./VisitLink";
+import { withRef } from "@/lib/utils";
 import { useSavedTools } from "@/lib/useSavedTools";
 import { toast } from "sonner";
 
@@ -18,17 +21,13 @@ export default function LibraryCard({ lib }: { lib: Library }) {
 
   const saved = mounted && isSaved(lib.id);
 
-  const externalUrl = lib.website_url?.includes("?")
-    ? `${lib.website_url}&ref=best-tools`
-    : `${lib.website_url || "#"}?ref=best-tools`;
-
   return (
-    <div className="group relative flex h-full flex-col gap-4 rounded-md bg-card p-5 transition-colors hover:bg-secondary">
-      <a href={externalUrl} target="_blank" rel="noreferrer" className="flex flex-1 flex-col gap-4">
+    <div className="group relative flex h-full flex-col gap-4 rounded-md bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary">
+      <Link href={`/tools/${lib.slug}`} className="flex flex-1 flex-col gap-4">
         <div className="flex items-center gap-3">
-          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-white">
+          <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-white/10">
             {imgError || !lib.logo_url ? (
-              <span className="text-base font-semibold text-neutral-700">{lib.name.charAt(0).toUpperCase()}</span>
+              <span className="text-base font-semibold text-foreground">{lib.name.charAt(0).toUpperCase()}</span>
             ) : (
               <Image
                 loading="eager"
@@ -42,14 +41,14 @@ export default function LibraryCard({ lib }: { lib: Library }) {
             )}
           </div>
 
-          <h3 className="text-lg font-semibold leading-tight tracking-tight text-foreground">{lib.name}</h3>
+          <h3 className="min-w-0 break-words text-lg font-semibold leading-tight tracking-tight text-foreground">{lib.name}</h3>
         </div>
 
         <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">{lib.description}</p>
-      </a>
+      </Link>
 
       <div className="mt-auto flex items-center justify-between gap-2">
-        <div className="flex flex-wrap gap-2">
+        <div className="flex min-w-0 flex-wrap gap-2">
           {tags.map((t) => (
             <span
               key={t}
@@ -60,6 +59,16 @@ export default function LibraryCard({ lib }: { lib: Library }) {
           ))}
         </div>
 
+        <div className="-mr-2 flex shrink-0 items-center">
+          <VisitLink
+            id={lib.id}
+            href={withRef(lib.website_url)}
+            aria-label={`Visit ${lib.name}`}
+            className="flex size-11 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-background hover:text-foreground active:scale-90"
+          >
+            <ArrowUpRight className="size-5" />
+          </VisitLink>
+
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -67,12 +76,13 @@ export default function LibraryCard({ lib }: { lib: Library }) {
             toggle(lib.id);
             toast(nowSaved ? "Tool bookmarked" : "Bookmark removed");
           }}
-          className="-mr-2 -mb-2 flex size-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-background"
+          className="flex size-11 shrink-0 items-center justify-center rounded-full transition-all hover:bg-background active:scale-90"
           aria-label={saved ? "Unsave tool" : "Save tool"}
           aria-pressed={saved}
         >
-          <Bookmark className={`size-5 ${saved ? "fill-current text-foreground" : "text-muted-foreground"}`} />
+          <Bookmark className={`size-5 transition-transform duration-200 ${saved ? "scale-110" : ""} ${saved ? "fill-current text-foreground" : "text-muted-foreground"}`} />
         </button>
+        </div>
       </div>
     </div>
   );

@@ -20,14 +20,16 @@ export async function getHighlights(): Promise<Highlight[]> {
 
   const highlights = data as Highlight[];
 
-  for (const h of highlights) {
-    const { data: items } = await client
-      .from("highlight_items")
-      .select("*, library:libraries(id, name, slug, framework, logo_url, og_image_url, website_url)")
-      .eq("highlight_id", h.id);
+  await Promise.all(
+    highlights.map(async (h) => {
+      const { data: items } = await client
+        .from("highlight_items")
+        .select("*, library:libraries(id, name, slug, framework, logo_url, og_image_url, website_url)")
+        .eq("highlight_id", h.id);
 
-    h.items = (items as Highlight["items"]) ?? [];
-  }
+      h.items = (items as Highlight["items"]) ?? [];
+    })
+  );
 
   return highlights;
 }

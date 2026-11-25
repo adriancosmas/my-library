@@ -15,6 +15,7 @@ function getSaved(): string[] {
 type SavedToolsContext = {
   saved: string[]
   toggle: (id: string) => void
+  saveMany: (ids: string[]) => void
   isSaved: (id: string) => boolean
 }
 
@@ -39,9 +40,17 @@ export function SavedToolsProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
+  const saveMany = useCallback((ids: string[]) => {
+    setSaved((prev) => {
+      const next = [...new Set([...prev, ...ids])]
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch {}
+      return next
+    })
+  }, [])
+
   const isSaved = useCallback((id: string) => saved.includes(id), [saved])
 
-  return <Ctx.Provider value={{ saved, toggle, isSaved }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ saved, toggle, saveMany, isSaved }}>{children}</Ctx.Provider>
 }
 
 export function useSavedTools() {

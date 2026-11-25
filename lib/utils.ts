@@ -13,3 +13,8 @@ export function slugify(input: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
 }
+
+export function withRef(url: string | undefined, ref = "best-tools") {
+  if (!url) return "#"
+  return `${url}${url.includes("?") ? "&" : "?"}ref=${ref}`
+}

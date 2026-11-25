@@ -6,6 +6,9 @@ import { getGithubRepos, GITHUB_FRAMEWORK } from "@/lib/githubRepos";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
 import { getHighlights } from "@/lib/highlights";
+import { mapLibrary } from "@/lib/libraries";
+import SortSelect from "./components/SortSelect";
+import type { Metadata } from "next";
 import type { Library, LibraryFilters } from "@/lib/types";
 import {
   Pagination,
@@ -16,6 +19,29 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+
+function applySort(q: any, sort?: string) {
+  switch (sort) {
+    case "oldest": return q.order("created_at", { ascending: true });
+    case "name": return q.order("name", { ascending: true });
+    case "popular": return q.order("click_count", { ascending: false }).order("created_at", { ascending: false });
+    default: return q.order("created_at", { ascending: false });
+  }
+}
+
+// Only the bare directory and its plain pages are indexable; filtered, saved and shared views are not.
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams?: Promise<LibraryFilters>;
+}): Promise<Metadata> {
+  const f = (await searchParams) || {};
+  const filtered = Boolean(f.q || f.tag || f.saved || f.github || f.sort || f.list || f.framework);
+  return {
+    alternates: { canonical: "/" },
+    ...(filtered ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 export default async function Home({
   searchParams,
@@ -34,6 +60,11 @@ export default async function Home({
   }
   const offset = (pageNum - 1) * PAGE_SIZE;
 
+  // Independent of the library query: start now so all fetches overlap.
+  const highlightsPromise = getHighlights();
+  const showBrowse = filters.saved !== "1" && filters.github !== "1";
+  const githubPromise = filters.saved !== "1" ? getGithubRepos() : Promise.resolve(null);
+
   let libraries: Library[] = [];
   let totalCount: number | null = null;
   let supabaseLoaded = false;
@@ -48,20 +79,20 @@ export default async function Home({
       .neq("framework", GITHUB_FRAMEWORK);
     if (filters.q) countQuery = countQuery.ilike("name", `%${filters.q}%`);
     if (filters.framework) countQuery = countQuery.eq("framework", filters.framework);
-    const { count: viewCount } = await countQuery;
-    if (typeof viewCount === "number") totalCount = viewCount;
 
     // Data query with pagination on view (latest first)
     let query = client
       .from("library_with_tags")
       .select("*")
       .neq("framework", GITHUB_FRAMEWORK)
-      .order('created_at', { ascending: false });
+      ;
     if (filters.q) query = query.ilike("name", `%${filters.q}%`);
     if (filters.framework) query = query.eq("framework", filters.framework);
+    query = applySort(query, filters.sort);
     if (filters.saved !== "1" && !filters.tag) query = query.range(offset, offset + PAGE_SIZE - 1);
 
-    const { data, error } = await query;
+    const [{ count: viewCount }, { data, error }] = await Promise.all([countQuery, query]);
+    if (typeof viewCount === "number") totalCount = viewCount;
     if (error) {
       // Fallback gracefully if the view isn't available yet
       console.warn(
@@ -111,10 +142,11 @@ export default async function Home({
         .from("libraries")
         .select("*")
         .neq("framework", GITHUB_FRAMEWORK)
-        .order('created_at', { ascending: false });
+        ;
       if (filters.q) libQuery = libQuery.ilike("name", `%${filters.q}%`);
       if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
       if (tagLibIds) libQuery = libQuery.in("id", tagLibIds);
+      libQuery = applySort(libQuery, filters.sort);
       if (filters.saved !== "1") libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
       const { data: libRows, error: libError } = await libQuery;
       if (libError) {
@@ -145,29 +177,11 @@ export default async function Home({
           }
         }
 
-        libraries = rows.map((row) => ({
-          id: String(row.id),
-          name: row.name,
-          slug: row.slug,
-          description: row.description,
-          framework: row.framework,
-          website_url: row.website_url,
-          logo_url: row.logo_url,
-          tags: tagsByLib[String(row.id)] || [],
-        }));
+        libraries = rows.map((row) => mapLibrary(row, tagsByLib[String(row.id)] || []));
       }
     } else if (data) {
       supabaseLoaded = true;
-      libraries = (data as any[]).map((row) => ({
-        id: String(row.id),
-        name: row.name,
-        slug: row.slug,
-        description: row.description,
-        framework: row.framework,
-        website_url: row.website_url,
-        logo_url: row.logo_url,
-        tags: Array.isArray(row.tags) ? row.tags : [],
-      }));
+      libraries = (data as any[]).map((row) => mapLibrary(row));
     }
   }
 
@@ -197,9 +211,9 @@ export default async function Home({
     libraries = filters.saved === "1" ? filtered : filtered.slice(offset, offset + PAGE_SIZE);
   }
 
-  const highlights = await getHighlights();
+  const highlights = await highlightsPromise;
   const githubView = filters.github === "1";
-  const github = filters.saved !== "1" ? await getGithubRepos() : null;
+  const github = await githubPromise;
   if (github && filters.q) {
     const needle = filters.q.toLowerCase();
     github.repos = github.repos.filter((r) =>
@@ -215,6 +229,7 @@ export default async function Home({
   if (filters.q) baseParams.set("q", filters.q);
   if (filters.framework && filters.framework !== "All") baseParams.set("framework", filters.framework);
   if (filters.tag) baseParams.set("tag", filters.tag.toLowerCase());
+  if (filters.sort) baseParams.set("sort", filters.sort);
   const makeHref = (p: number) => {
     const params = new URLSearchParams(baseParams);
     params.set("page", String(Math.max(1, p)));
@@ -251,6 +266,7 @@ export default async function Home({
   return (
     <div className="min-h-screen">
         <div className="px-4 py-8 sm:px-6">
+        {filters.saved !== "1" && (
         <div className="mb-12">
           <h1 className="max-w-[26ch] text-balance text-2xl font-bold leading-tight tracking-tight text-foreground sm:text-[32px] sm:leading-[38px]">
             Just tons of libraries & tools to help your daily life
@@ -263,8 +279,15 @@ export default async function Home({
             </a>
           </p>
         </div>
+        )}
 
         {filters.saved !== "1" && !githubView && <HighlightSection highlights={highlights} />}
+
+        {showBrowse && (
+          <div className="mt-6 flex justify-end">
+            <SortSelect value={filters.sort} />
+          </div>
+        )}
 
         {!githubView && <Suspense fallback={null}><LibraryGrid libraries={libraries} /></Suspense>}
 

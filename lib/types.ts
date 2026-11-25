@@ -11,6 +11,8 @@ export type Library = {
   og_image_url?: string;
   favicon_url?: string;
   tags: string[];
+  created_at?: string;
+  click_count?: number;
 };
 
 export type LibraryFilters = {
@@ -22,6 +24,8 @@ export type LibraryFilters = {
   github?: string;
   gpage?: string;
   sub?: string;
+  sort?: string;
+  list?: string;
 };
 
 export type HighlightItem = {

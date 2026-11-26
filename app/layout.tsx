@@ -72,7 +72,7 @@ export default async function RootLayout({
         <div className="mx-auto flex min-h-screen w-full max-w-[1600px] lg:h-full lg:min-h-0 lg:overflow-hidden">
           <Suspense fallback={null}><Sidebar tags={tags} /></Suspense>
           <PageViewTracker />
-          <main className="thin-scrollbar relative min-w-0 flex-1 min-h-screen pt-14 lg:m-1.5 lg:ml-0 lg:min-h-0 lg:overflow-y-auto lg:rounded-2xl lg:border lg:border-border lg:bg-background lg:pt-0">
+          <main className="thin-scrollbar relative min-w-0 flex-1 min-h-screen pt-14 lg:m-1.5 lg:ml-0 lg:min-h-0 lg:overflow-y-auto lg:rounded-2xl lg:bg-background lg:pt-0">
               <Providers>{children}</Providers>
           </main>
         </div>

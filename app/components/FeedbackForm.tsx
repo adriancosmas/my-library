@@ -46,13 +46,13 @@ export default function FeedbackForm() {
         <Button className="rounded-full" onClick={() => setStatus("idle")}>Send another</Button>
       </div>
     ) : (
-      <form onSubmit={onSubmit} className="space-y-3">
-        <div className="space-y-1.5">
-          <label htmlFor="feedback-message" className="text-sm font-medium">Message</label>
+      <form onSubmit={onSubmit} className="flex flex-1 flex-col gap-6">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="feedback-message" className="block text-sm font-medium leading-none">Message</label>
           <Textarea id="feedback-message" name="message" className="min-h-36" required minLength={3} maxLength={2000} rows={5} placeholder="What's on your mind?" />
         </div>
-        <div className="space-y-1.5">
-          <label htmlFor="feedback-email" className="text-sm font-medium">
+        <div className="flex flex-col gap-2">
+          <label htmlFor="feedback-email" className="block text-sm font-medium leading-snug">
             Email <span className="font-normal text-muted-foreground">(optional, if you want a reply)</span>
           </label>
           <Input id="feedback-email" name="email" type="email" maxLength={200} placeholder="you@example.com" />
@@ -61,7 +61,7 @@ export default function FeedbackForm() {
 
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
 
-        <Button type="submit" disabled={status === "sending"} className="w-full rounded-full">
+        <Button type="submit" disabled={status === "sending"} size="lg" className="mt-auto w-full rounded-full">
           {status === "sending" ? <Spinner className="size-4" /> : null}
           Send feedback
         </Button>

@@ -42,7 +42,7 @@ export default function FeedbackPage() {
           </ul>
         </section>
 
-        <section aria-label="Feedback form" className="rounded-xl bg-card p-5 sm:p-7">
+        <section aria-label="Feedback form" className="flex flex-col rounded-xl bg-card p-5 sm:p-7">
           <FeedbackForm />
         </section>
       </div>

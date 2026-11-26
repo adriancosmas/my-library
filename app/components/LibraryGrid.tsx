@@ -2,10 +2,11 @@
 
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Bookmark, Link2 } from "lucide-react"
+import { Bookmark, Link2, SearchX } from "lucide-react"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import LibraryCard from "./LibraryCard"
+import EmptyState from "./EmptyState"
 import { useSavedTools } from "@/lib/useSavedTools"
 import type { Library } from "@/lib/types"
 
@@ -18,6 +19,7 @@ export default function LibraryGrid({ libraries }: { libraries: Library[] }) {
   const [mounted, setMounted] = useState(false)
   const showSaved = searchParams.get("saved") === "1"
   const sharedSlugs = searchParams.get("list")?.split(",").filter(Boolean)
+  const query = searchParams.get("q")?.trim()
   const isShared = showSaved && Boolean(sharedSlugs?.length)
 
   useEffect(() => { setMounted(true) }, [])
@@ -80,20 +82,29 @@ export default function LibraryGrid({ libraries }: { libraries: Library[] }) {
         ))}
 
         {mounted && filtered.length === 0 && (
-          <div className="col-span-full flex flex-col items-center gap-3 rounded-md bg-card px-6 py-16 text-center">
-            {showSaved && <Bookmark className="size-8 text-muted-foreground" aria-hidden />}
-            <p className="text-sm font-medium text-foreground">
-              {showSaved ? "No saved tools yet" : "No libraries found"}
-            </p>
-            {showSaved && (
-              <>
-                <p className="text-sm text-muted-foreground">Bookmark a tool and it shows up here.</p>
-                <Link href="/" className="text-sm font-medium underline decoration-primary decoration-2 underline-offset-4">
-                  Browse tools
-                </Link>
-              </>
-            )}
-          </div>
+          showSaved ? (
+            <EmptyState
+              className="col-span-full"
+              icon={<Bookmark className="size-6" />}
+              title="No saved tools yet"
+              text="Bookmark a tool and it shows up here."
+            >
+              <Link href="/" className="text-sm font-medium underline decoration-primary decoration-2 underline-offset-4">
+                Browse tools
+              </Link>
+            </EmptyState>
+          ) : (
+            <EmptyState
+              className="col-span-full"
+              icon={<SearchX className="size-6" />}
+              title={query ? `No results for "${query}"` : "No tools found"}
+              text="Try a different keyword, check the spelling, or clear the filters."
+            >
+              <Link href="/" className="text-sm font-medium underline decoration-primary decoration-2 underline-offset-4">
+                Clear search
+              </Link>
+            </EmptyState>
+          )
         )}
       </div>
     </>

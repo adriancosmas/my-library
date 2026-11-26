@@ -17,8 +17,20 @@ function normalize(r: GithubRepo): GithubRepo {
 async function fetchRepos(): Promise<GithubRepo[]> {
   const client = getSupabaseClient();
   if (!client) throw new Error("Supabase env vars missing");
-  // `libraries` has every GitHub column; the view only has the columns that
-  // existed when it was created, so it is just a fallback.
+
+  // Dashboard stores repos in `github_repos`; the main category is the group.
+  const { data: repos, error: reposError } = await client
+    .from("github_repos")
+    .select("*, category:tags!category_id(name)")
+    .order("created_at", { ascending: false });
+  if (!reposError && repos) {
+    return (repos as unknown as (GithubRepo & { category: { name: string } | null })[]).map(
+      ({ category, ...r }) => normalize({ ...r, subcategory: category?.name ?? null }),
+    );
+  }
+
+  // Legacy: repos used to be `libraries` rows. The view only has the columns
+  // that existed when it was created, so it is just a fallback.
   for (const table of ["libraries", "library_with_tags"]) {
     const { data, error } = await client
       .from(table)

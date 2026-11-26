@@ -5,4 +5,10 @@ export const SITE_URL = (
   "http://localhost:3000"
 ).replace(/\/$/, "")
 
-export const SITE_NAME = "Cosmas's Tools Directory"
+export const SITE_NAME = "mY Directory | Your resource directory is here now"
+
+// Short brand for title suffixes and share cards; SITE_NAME is the longer homepage title.
+export const SITE_BRAND = "mY Directory"
+
+export const SITE_DESCRIPTION =
+  "A curated directory of free tools, design resources, UI components, icons, AI tools and open source projects, hand-picked by Cosmas."

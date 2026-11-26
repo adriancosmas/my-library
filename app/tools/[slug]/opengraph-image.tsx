@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og"
 import { getLibraryBySlug } from "@/lib/libraries"
-import { SITE_NAME } from "@/lib/site"
+import { SITE_BRAND } from "@/lib/site"
 
 export const alt = "Tool preview"
 export const size = { width: 1200, height: 630 }
@@ -27,7 +27,7 @@ export default async function OgImage({ params }: { params: Promise<{ slug: stri
           padding: 72,
         }}
       >
-        <div style={{ display: "flex", fontSize: 28, color: "#a1a1aa" }}>{SITE_NAME}</div>
+        <div style={{ display: "flex", fontSize: 28, color: "#a1a1aa" }}>{SITE_BRAND}</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ display: "flex", fontSize: 88, fontWeight: 700, lineHeight: 1.05 }}>{name}</div>
           <div style={{ display: "flex", fontSize: 36, color: "#a1a1aa", lineHeight: 1.3 }}>{description}</div>

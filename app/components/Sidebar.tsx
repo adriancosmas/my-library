@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback, useTransition } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import {
   Menu,
@@ -9,6 +10,7 @@ import {
   Search,
   PanelLeftClose,
   PanelLeftOpen,
+  MessageSquare,
 } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { getCategoryIcon } from "./categoryIcons";
@@ -147,7 +149,8 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
   return (
     <>
       <div className="fixed top-0 left-0 right-0 z-30 flex h-14 items-center justify-between border-b border-border bg-background px-4 lg:hidden">
-        <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
+        <Link href="/" className="flex min-w-0 items-center gap-2 whitespace-nowrap text-xl font-bold tracking-tight text-foreground">
+          <Image src="/img/logo.webp" alt="" width={28} height={28} className="shrink-0 rounded-md" />
           mY Directory.
         </Link>
 
@@ -169,7 +172,7 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
       )}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 max-w-full overflow-hidden border-r border-border bg-card transition-transform duration-300 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 max-w-full overflow-hidden border-r border-border bg-card lg:border-r-0 lg:bg-frame transition-transform duration-300 lg:static lg:h-full lg:shrink-0 lg:translate-x-0 ${
           animate ? "lg:transition-[width,transform]" : "lg:transition-none"
         } ${collapsed ? "lg:w-16" : "lg:w-64"} ${open ? "translate-x-0" : "-translate-x-full max-lg:invisible"}`}
       >
@@ -197,7 +200,15 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
           >
             <Bookmark size={20} weight={isSavedView ? "Filled" : "Outline"} />
           </Link>
-          <div className="mt-auto">
+          <div className="mt-auto flex flex-col items-center gap-2">
+            <Link
+              href="/feedback"
+              aria-label="Send feedback"
+              aria-current={pathname === "/feedback" ? "page" : undefined}
+              className={`${railBtn} ${pathname === "/feedback" ? itemCurrent : itemIdle}`}
+            >
+              <MessageSquare className="size-5" />
+            </Link>
             <ThemeToggle iconOnly />
           </div>
         </div>
@@ -208,7 +219,8 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
           }`}
         >
         <div className="flex items-center justify-between px-5 py-5">
-          <Link href="/" className="text-2xl font-bold tracking-tight text-foreground">
+          <Link href="/" className="flex min-w-0 items-center gap-2 whitespace-nowrap text-xl font-bold tracking-tight text-foreground">
+            <Image src="/img/logo.webp" alt="" width={28} height={28} className="shrink-0 rounded-md" />
             mY Directory.
           </Link>
 
@@ -321,7 +333,15 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
           </Accordion>
         </div>
 
-        <div className="border-t border-border px-3 py-3">
+        <div className="space-y-1 border-t border-border px-3 py-3">
+          <Link
+            href="/feedback"
+            onClick={() => setOpen(false)}
+            aria-current={pathname === "/feedback" ? "page" : undefined}
+            className={`${itemBase} ${pathname === "/feedback" ? itemCurrent : itemIdle}`}
+          >
+            <MessageSquare className="size-5" /> Send feedback
+          </Link>
           <ThemeToggle fullWidth />
         </div>
         </div>

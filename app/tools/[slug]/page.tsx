@@ -7,7 +7,7 @@ import LibraryCard from "@/app/components/LibraryCard"
 import VisitLink from "@/app/components/VisitLink"
 import ToolScreenshot from "@/app/components/ToolScreenshot"
 import { getAllLibraries, getLibraryBySlug, getRelated, tagToParam } from "@/lib/libraries"
-import { SITE_URL, SITE_NAME } from "@/lib/site"
+import { SITE_URL, SITE_BRAND } from "@/lib/site"
 import { withRef } from "@/lib/utils"
 
 export const revalidate = 3600
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const lib = await getLibraryBySlug(slug)
   if (!lib) return { title: "Tool not found", robots: { index: false } }
-  const description = lib.description || `${lib.name} on ${SITE_NAME}.`
+  const description = lib.description || `${lib.name} on ${SITE_BRAND}.`
   const title = `${lib.name}${lib.tags[0] ? ` — ${lib.tags[0]} tool` : ""}`
   return {
     title,
@@ -101,7 +101,7 @@ export default async function ToolPage({ params }: Props) {
           {lib.tags.map((t) => (
             <li key={t}>
               <Link
-                href={`/?tag=${tagToParam(t)}`}
+                href={`/tags/${tagToParam(t)}`}
                 className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-accent"
               >
                 {t}

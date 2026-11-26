@@ -19,7 +19,7 @@ export async function Hero() {
     <section className="mb-14 grid grid-cols-1 items-center gap-10 pt-4 sm:pt-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-14">
       <div className="min-w-0">
         <h1 className="hero-rise max-w-[24ch] break-words text-balance text-3xl sm:text-5xl font-semibold leading-[1.05] tracking-tight text-foreground">
-          Just tons of libraries &amp; tools to help your daily life
+          Just tons of resources to help your daily life and productivity
         </h1>
         <p className="hero-rise mt-6 text-sm text-muted-foreground sm:text-base" style={{ animationDelay: "100ms" }}>
           Curated by{" "}

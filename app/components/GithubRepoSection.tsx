@@ -87,7 +87,7 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
           {visible.length === 0 ? (
             <p className="text-sm text-muted-foreground">No repositories match.</p>
           ) : (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="view-grid grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((repo) => (
                 <GithubRepoCard key={repo.id} repo={repo} />
               ))}

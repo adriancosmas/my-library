@@ -1,15 +1,22 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Inter } from "next/font/google";
+import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar";
 import PageViewTracker from "./components/PageViewTracker";
 import Providers from "./components/Providers";
 import { SITE_URL, SITE_NAME, SITE_BRAND, SITE_DESCRIPTION } from "@/lib/site";
+import { PREF_NAMES } from "@/lib/prefs";
 import { getAllLibraries, topTags } from "@/lib/libraries";
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const serif = Source_Serif_4({
+  variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
 });
@@ -65,17 +72,19 @@ export default async function RootLayout({
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
         <script dangerouslySetInnerHTML={{
-          __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`
+          __html: `(function(){try{${JSON.stringify(PREF_NAMES)}.forEach(function(k){var v=localStorage.getItem("pref-"+k);if(v)document.documentElement.dataset[k]=v});var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}})()`
         }} />
       </head>
-      <body className={`${inter.variable} antialiased lg:h-full lg:bg-frame`}>
+      <body className={`${inter.variable} ${serif.variable} antialiased lg:h-full lg:bg-frame`}>
+        <Providers>
         <div className="mx-auto flex min-h-screen w-full max-w-[1600px] lg:h-full lg:min-h-0 lg:overflow-hidden">
           <Suspense fallback={null}><Sidebar tags={tags} /></Suspense>
           <PageViewTracker />
           <main className="thin-scrollbar relative min-w-0 flex-1 min-h-screen pt-14 lg:m-1.5 lg:ml-0 lg:min-h-0 lg:overflow-y-auto lg:rounded-2xl lg:bg-background lg:pt-0">
-              <Providers>{children}</Providers>
+              {children}
           </main>
         </div>
+        </Providers>
       </body>
     </html>
   );

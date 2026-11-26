@@ -13,6 +13,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import SettingsMenu from "./SettingsMenu";
 import { getCategoryIcon } from "./categoryIcons";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -209,6 +210,7 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
             >
               <MessageSquare className="size-5" />
             </Link>
+            <SettingsMenu iconOnly />
             <ThemeToggle iconOnly />
           </div>
         </div>
@@ -342,6 +344,7 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
           >
             <MessageSquare className="size-5" /> Send feedback
           </Link>
+          <SettingsMenu fullWidth />
           <ThemeToggle fullWidth />
         </div>
         </div>

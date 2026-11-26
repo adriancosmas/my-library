@@ -1,6 +1,32 @@
 # Changelog
 
-## 2026-11-25
+All notable changes to this project are documented here.
+Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/) (`MAJOR.MINOR.PATCH`; the project is pre-1.0, so `MINOR` = new feature, `PATCH` = fix).
+
+## [Unreleased]
+
+## [0.2.0] - 2026-11-26
+
+### Added
+- GitHub repositories: read from the `github_repos` table, with a repos page, detail pages at `/repos/[slug]`, full tags with the main tag highlighted, star count in primary yellow, and save and open-on-GitHub buttons.
+- Saved page: separate Tools and GitHub repositories sections, search and filtering, cleaner share URLs.
+- Tool detail page: save button.
+- Submit page, feedback page, footer, tag pages, favicon and logo, 404 page and distinct empty states.
+- Arc-style layout with spacing around the main content, and a redesigned hero with a logo wall.
+- Privacy-friendly page view tracking.
+- Settings menu in the sidebar: reduce motion, colour-blind friendly mode, serif font, disable rounded corners, and grid or list view (default grid).
+- Visited state on cards.
+- Toasts with motion that match the theme; tooltips on tool cards.
+
+### Changed
+- Dark theme uses gray shades instead of neutral.
+- Tooltips match the theme and no longer block clicks on the card.
+- Feedback form: no input shadow, more space between groups.
+
+### Fixed
+- List view: the whole card opens the detail page; actions sit top right and tags bottom right.
+
+## [0.1.0] - 2026-11-25
 
 ### Added
 - Tool detail pages at `/tools/[slug]`: logo, description, category chips, Open Graph screenshot with a "No preview available" fallback, "Similar tools", and a sticky title row with a "Visit website" button.

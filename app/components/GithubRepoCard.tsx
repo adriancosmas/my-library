@@ -9,6 +9,7 @@ import type { GithubRepo } from "@/lib/types";
 import { formatStars } from "@/lib/githubRepos";
 import { useSavedTools } from "@/lib/useSavedTools";
 import ClampedText from "./ClampedText";
+import { markVisited, useIsVisited } from "@/lib/useVisited";
 
 const subscribe = () => () => {};
 
@@ -20,10 +21,11 @@ export default function GithubRepoCard({ repo }: { repo: GithubRepo }) {
   const owner = repo.github_author ?? "";
   const label = owner ? `${owner}/${repo.name}` : repo.name;
   const saved = mounted && isSaved(repo.id);
+  const visited = useIsVisited(repo.id);
 
   return (
-    <div className="group relative flex h-full flex-col gap-4 rounded-md bg-card p-5 transition-colors hover:bg-secondary">
-      <Link href={`/repos/${repo.slug}`} className="flex flex-1 flex-col gap-4">
+    <div data-visited={visited || undefined} style={{ viewTransitionName: `card-${repo.id}` }} className="group relative flex h-full flex-col gap-4 in-data-[view=list]:flex-row in-data-[view=list]:items-center rounded-md bg-card p-5 transition-colors hover:bg-secondary">
+      <Link href={`/repos/${repo.slug}`} className="flex flex-1 flex-col gap-4 in-data-[view=list]:after:absolute in-data-[view=list]:after:inset-0 in-data-[view=list]:after:content-['']">
         <div className="flex items-center gap-3">
           <div className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full bg-secondary group-hover:bg-background">
             {imgError || !repo.logo_url ? (
@@ -46,11 +48,11 @@ export default function GithubRepoCard({ repo }: { repo: GithubRepo }) {
 
         <ClampedText
           text={repo.description || "No description."}
-          className="line-clamp-2 text-sm leading-6 text-muted-foreground"
+          className="card-desc line-clamp-2 text-sm leading-6 text-muted-foreground"
         />
       </Link>
 
-      <div className="mt-auto flex items-center justify-between gap-2">
+      <div className="mt-auto flex items-center justify-between gap-2 in-data-[view=list]:mt-0 in-data-[view=list]:shrink-0 in-data-[view=list]:gap-6 in-data-[view=list]:flex-col-reverse in-data-[view=list]:items-end in-data-[view=list]:justify-between in-data-[view=list]:self-stretch">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Star className="size-4 fill-primary text-primary" aria-hidden="true" />
           <span className="tabular-nums" aria-label={`${repo.github_stars ?? 0} stars`}>
@@ -58,12 +60,13 @@ export default function GithubRepoCard({ repo }: { repo: GithubRepo }) {
           </span>
         </div>
 
-        <div className="-mr-2 flex shrink-0 items-center">
+        <div className="-mr-2 relative z-10 flex shrink-0 items-center">
           {repo.github_url && (
             <a
               href={repo.github_url}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => markVisited(repo.id)}
               aria-label={`Open ${label} on GitHub`}
               className="flex size-11 items-center justify-center rounded-full text-muted-foreground transition-all hover:bg-background hover:text-foreground active:scale-90"
             >

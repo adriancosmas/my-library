@@ -164,3 +164,84 @@
 @media (prefers-reduced-motion: reduce) {
   .hero-rise, .hero-draw { animation: none; opacity: 1; transform: none; }
 }
+
+/* List view: one column; cards switch to a row via in-data-[view=list] variants. */
+html[data-view="list"] .view-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Accent colors. Declared before the color-vision palettes so those still win. */
+html[data-accent="bw"] { --primary: oklch(0.2 0.01 95); --primary-foreground: oklch(0.99 0 0); --ring: oklch(0.2 0.01 95); }
+html[data-accent="bw"].dark { --primary: oklch(0.97 0.004 95); --primary-foreground: oklch(0.15 0.005 95); --ring: oklch(0.97 0.004 95); }
+
+/* Color-blind palettes: only the accent and destructive colours change.
+   rg = red-green (protan/deutan): blue accent, orange-red for errors.
+   by = blue-yellow (tritan): teal accent, red for errors. */
+html[data-vision="rg"] {
+  --primary: oklch(0.55 0.15 250);
+  --primary-foreground: oklch(0.99 0 0);
+  --ring: oklch(0.55 0.15 250);
+  --destructive: oklch(0.58 0.19 45);
+}
+html[data-vision="rg"].dark {
+  --primary: oklch(0.74 0.13 245);
+  --primary-foreground: oklch(0.18 0.02 250);
+  --ring: oklch(0.74 0.13 245);
+  --destructive: oklch(0.72 0.17 55);
+}
+html[data-vision="by"] {
+  --primary: oklch(0.62 0.12 195);
+  --primary-foreground: oklch(0.15 0.02 195);
+  --ring: oklch(0.62 0.12 195);
+}
+html[data-vision="by"].dark {
+  --primary: oklch(0.78 0.12 195);
+  --primary-foreground: oklch(0.15 0.02 195);
+  --ring: oklch(0.78 0.12 195);
+}
+
+/* Grid/list change morphs each card (view-transition-name set per card). */
+::view-transition-group(*) {
+  animation-duration: 0.35s;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Settings: serif font and reduced motion, both set on <html data-*>. */
+html[data-font="serif"] body {
+  font-family: var(--font-serif), Georgia, serif;
+}
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Setting: square corners. */
+html[data-corners="square"] *,
+html[data-corners="square"] *::before,
+html[data-corners="square"] *::after {
+  border-radius: 0 !important;
+}
+
+/* Settings: text size scales every rem. */
+html[data-text="sm"] { font-size: 93.75%; }
+html[data-text="lg"] { font-size: 112.5%; }
+
+/* Card details: compact hides descriptions, minimal also hides tags. */
+html[data-cards="compact"] .card-desc,
+html[data-cards="minimal"] .card-desc,
+html[data-cards="minimal"] .card-tags {
+  display: none;
+}
+
+/* Visited tools fade back until hovered. */
+html[data-seen="dim"] [data-visited="true"] {
+  opacity: 0.55;
+}
+html[data-seen="dim"] [data-visited="true"]:hover {
+  opacity: 0.9;
+}

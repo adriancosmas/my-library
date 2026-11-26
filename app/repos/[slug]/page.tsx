@@ -5,6 +5,7 @@ import { notFound } from "next/navigation"
 import { ArrowUpRight, ChevronLeft, Star } from "lucide-react"
 import GithubRepoCard from "@/app/components/GithubRepoCard"
 import SaveButton from "@/app/components/SaveButton"
+import MarkVisited from "@/app/components/MarkVisited"
 import ToolScreenshot from "@/app/components/ToolScreenshot"
 import { formatStars, getGithubRepoBySlug, getGithubRepos, repoGroup } from "@/lib/githubRepos"
 import { SITE_URL, SITE_BRAND } from "@/lib/site"
@@ -88,6 +89,7 @@ export default async function RepoPage({ params }: Props) {
           <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground">{repo.name}</h1>
           {owner && <p className="truncate text-sm text-muted-foreground">by {owner}</p>}
         </div>
+        <MarkVisited id={repo.id} />
         <SaveButton id={repo.id} noun="repository" />
         {repo.github_url && (
           <a

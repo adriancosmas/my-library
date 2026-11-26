@@ -9,6 +9,7 @@ import { SAMPLE_LIBRARIES } from "@/lib/sampleData";
 import { getHighlights } from "@/lib/highlights";
 import { mapLibrary } from "@/lib/libraries";
 import SortSelect from "./components/SortSelect";
+import { ViewSwitch } from "./components/PrefToggles";
 import type { Metadata } from "next";
 import type { Library, LibraryFilters } from "@/lib/types";
 import {
@@ -275,8 +276,9 @@ export default async function Home({
         {!savedView && !githubView && <HighlightSection highlights={highlights} />}
 
         {showBrowse && (
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex items-center justify-end gap-3">
             <SortSelect value={filters.sort} />
+            <ViewSwitch />
           </div>
         )}
 

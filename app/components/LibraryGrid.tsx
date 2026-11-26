@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import LibraryCard from "./LibraryCard"
 import GithubRepoCard from "./GithubRepoCard"
 import EmptyState from "./EmptyState"
+import { ViewSwitch } from "./PrefToggles"
 import { useSavedTools } from "@/lib/useSavedTools"
 import { repoGroup } from "@/lib/githubRepos"
 import { ui } from "@/lib/ui"
@@ -85,7 +86,7 @@ export default function LibraryGrid({ libraries, repos = [] }: { libraries: Libr
     }
   }
 
-  const grid = "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+  const grid = "view-grid grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
   const fade = (i: number) => ({ animationDelay: `${Math.min(i, 8) * 30}ms` })
   const heading = "mt-8 text-[22px] font-semibold leading-7 tracking-tight text-foreground"
 
@@ -166,6 +167,8 @@ export default function LibraryGrid({ libraries, repos = [] }: { libraries: Libr
                 <ChevronDown className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
               </div>
             )}
+
+            <div className="ml-auto"><ViewSwitch /></div>
           </div>
         </>
       )}

@@ -97,7 +97,7 @@ export default async function TagPage({ params }: Props) {
       </h1>
       <p className="mt-2 max-w-[65ch] text-muted-foreground">{describe(label, libs)}</p>
 
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="mt-8 view-grid grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {libs.map((l) => (
           <LibraryCard key={l.id} lib={l} />
         ))}

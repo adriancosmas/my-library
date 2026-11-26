@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react"
 import { trackClick } from "@/lib/trackClick"
+import { markVisited } from "@/lib/useVisited"
 
 export default function VisitLink({
   id,
@@ -22,8 +23,8 @@ export default function VisitLink({
       target="_blank"
       rel="noreferrer"
       className={className}
-      onClick={() => trackClick(id)}
-      onAuxClick={() => trackClick(id)}
+      onClick={() => { markVisited(id); trackClick(id) }}
+      onAuxClick={() => { markVisited(id); trackClick(id) }}
     >
       {children}
     </a>

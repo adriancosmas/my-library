@@ -1,0 +1,14 @@
+/* Hallmark · component: empty state · genre: playful · theme: project tokens (warm grey, one yellow signal, Inter), flat surfaces, no gradient · states: static, the action is a link or button · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4 · weakest: S, ghost slots fit any grid; the message card and its icon say which list is empty. Cut: the icon tile, the turning outline and every endless loop */
+
+/* Each variant has its own composition (see EmptyState.tsx). The message lands once; shelf spines rise
+   one after another. Only transform and opacity move. */
+.empty-main { animation: empty-land 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.empty-spine { transform-origin: bottom; animation: empty-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes empty-land { from { opacity: 0; transform: translateY(16px); } }
+@keyframes empty-rise { from { opacity: 0; transform: scaleY(0.6); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-main, .empty-spine { animation: none; }
+}

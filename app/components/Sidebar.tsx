@@ -100,7 +100,7 @@ export default function Sidebar({ tags = [] }: { tags?: string[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [focusSearch]);
 
-  const isSavedView = searchParams.get("saved") === "1";
+  const isSavedView = searchParams.get("saved") === "1" || searchParams.has("list");
   const activeTag = searchParams.get("tag") || "";
   const isGithubView = searchParams.get("github") === "1";
 

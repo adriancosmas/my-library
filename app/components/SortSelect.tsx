@@ -1,6 +1,7 @@
 "use client"
 
 import { useRouter, useSearchParams } from "next/navigation"
+import { ui } from "@/lib/ui"
 import { ChevronDown } from "lucide-react"
 
 const OPTIONS = [
@@ -28,7 +29,7 @@ export default function SortSelect({ value }: { value?: string }) {
           const qs = params.toString()
           router.push(qs ? `/?${qs}` : "/")
         }}
-        className="h-9 cursor-pointer appearance-none rounded-full bg-secondary pl-4 pr-9 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className={ui.select}
       >
         {OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>

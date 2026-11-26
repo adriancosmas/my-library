@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { GithubRepo } from "@/lib/types";
 import { GITHUB_PAGE_SIZE, repoGroup } from "@/lib/githubRepos";
+import { ui } from "@/lib/ui";
 import GithubRepoCard from "./GithubRepoCard";
 import {
   Pagination,
@@ -20,8 +21,6 @@ type Props = {
   params: URLSearchParams;
 };
 
-const chipBase =
-  "inline-flex h-9 items-center rounded-full px-4 text-sm font-medium transition-colors";
 
 export default function GithubRepoSection({ repos, error, page, sub, params }: Props) {
   const href = (overrides: { gpage?: number; sub?: string | null }) => {
@@ -73,10 +72,10 @@ export default function GithubRepoSection({ repos, error, page, sub, params }: P
                   href={href({ sub: name, gpage: 1 })}
                   scroll={false}
                   aria-current={selected ? "true" : undefined}
-                  className={`${chipBase} ${
+                  className={`${ui.chip} ${
                     selected
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground hover:bg-accent"
+                      ? ui.chipOn
+                      : ui.chipOff
                   }`}
                 >
                   {name ?? "All"}

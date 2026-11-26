@@ -56,11 +56,13 @@ export type Highlight = {
 
 export type GithubRepo = {
   id: string;
+  slug: string;
   name: string;
   github_author: string | null;
   github_url: string | null;
   github_stars: number | null;
   subcategory: string | null;
+  tags?: string[];
   description: string | null;
   logo_url: string | null;
   og_image_url: string | null;

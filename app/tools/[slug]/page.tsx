@@ -5,6 +5,7 @@ import { notFound } from "next/navigation"
 import { ArrowUpRight, ChevronLeft } from "lucide-react"
 import LibraryCard from "@/app/components/LibraryCard"
 import VisitLink from "@/app/components/VisitLink"
+import SaveButton from "@/app/components/SaveButton"
 import ToolScreenshot from "@/app/components/ToolScreenshot"
 import { getAllLibraries, getLibraryBySlug, getRelated, tagToParam } from "@/lib/libraries"
 import { SITE_URL, SITE_BRAND } from "@/lib/site"
@@ -85,6 +86,7 @@ export default async function ToolPage({ params }: Props) {
           )}
         </div>
         <h1 className="min-w-0 flex-1 text-balance text-3xl font-bold tracking-tight text-foreground">{lib.name}</h1>
+        <SaveButton id={lib.id} noun="tool" />
         {lib.website_url && (
           <VisitLink
             id={lib.id}

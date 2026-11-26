@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Compass } from "lucide-react"
+import { ui } from "@/lib/ui"
 import EmptyState from "@/app/components/EmptyState"
 
 export const metadata = { title: "Page not found", robots: { index: false, follow: true } }
@@ -8,13 +9,14 @@ export default function NotFound() {
   return (
     <div className="px-4 py-16 sm:px-6 lg:py-24">
       <EmptyState
-        className="mx-auto max-w-xl"
-        icon={<Compass className="size-6" />}
-        title="404, page not found"
-        text="This page doesn't exist or the tool was removed. Head back to the directory to keep browsing."
+        variant="lost"
+        className="mx-auto max-w-5xl"
+        icon={<Compass />}
+        title="You took a wrong turn"
+        text="This page is gone or never existed. The directory is one tap away."
       >
-        <Link href="/" className="mt-2 inline-flex h-11 items-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/85 active:scale-[0.97]">
-          Back to directory
+        <Link href="/" className={ui.emptyAction}>
+          Back to the directory
         </Link>
       </EmptyState>
     </div>

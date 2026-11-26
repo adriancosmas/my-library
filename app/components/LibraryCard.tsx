@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import type { Library } from "@/lib/types";
 import { Bookmark, ArrowUpRight } from "lucide-react";
 import VisitLink from "./VisitLink";
+import ClampedText from "./ClampedText";
 import { withRef } from "@/lib/utils";
 import { useSavedTools } from "@/lib/useSavedTools";
 import { toast } from "sonner";
@@ -44,7 +45,7 @@ export default function LibraryCard({ lib }: { lib: Library }) {
           <h3 className="min-w-0 break-words text-lg font-semibold leading-tight tracking-tight text-foreground">{lib.name}</h3>
         </div>
 
-        <p className="line-clamp-3 text-sm leading-6 text-muted-foreground">{lib.description}</p>
+        <ClampedText text={lib.description} className="line-clamp-3 text-sm leading-6 text-muted-foreground" />
       </Link>
 
       <div className="mt-auto flex items-center justify-between gap-2">
@@ -74,7 +75,8 @@ export default function LibraryCard({ lib }: { lib: Library }) {
             e.preventDefault();
             const nowSaved = !saved;
             toggle(lib.id);
-            toast(nowSaved ? "Tool bookmarked" : "Bookmark removed");
+            if (nowSaved) toast.success("Tool bookmarked");
+            else toast.error("Bookmark removed");
           }}
           className="flex size-11 shrink-0 items-center justify-center rounded-full transition-all hover:bg-background active:scale-90"
           aria-label={saved ? "Unsave tool" : "Save tool"}

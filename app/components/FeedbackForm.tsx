@@ -46,16 +46,16 @@ export default function FeedbackForm() {
         <Button className="rounded-full" onClick={() => setStatus("idle")}>Send another</Button>
       </div>
     ) : (
-      <form onSubmit={onSubmit} className="flex flex-1 flex-col gap-6">
+      <form onSubmit={onSubmit} className="flex flex-1 flex-col gap-8">
         <div className="flex flex-col gap-2">
           <label htmlFor="feedback-message" className="block text-sm font-medium leading-none">Message</label>
-          <Textarea id="feedback-message" name="message" className="min-h-36" required minLength={3} maxLength={2000} rows={5} placeholder="What's on your mind?" />
+          <Textarea id="feedback-message" name="message" className="min-h-36 shadow-none" required minLength={3} maxLength={2000} rows={5} placeholder="What's on your mind?" />
         </div>
         <div className="flex flex-col gap-2">
           <label htmlFor="feedback-email" className="block text-sm font-medium leading-snug">
             Email <span className="font-normal text-muted-foreground">(optional, if you want a reply)</span>
           </label>
-          <Input id="feedback-email" name="email" type="email" maxLength={200} placeholder="you@example.com" />
+          <Input id="feedback-email" className="shadow-none" name="email" type="email" maxLength={200} placeholder="you@example.com" />
         </div>
         <input name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
 

@@ -21,12 +21,18 @@ async function fetchRepos(): Promise<GithubRepo[]> {
   // Dashboard stores repos in `github_repos`; the main category is the group.
   const { data: repos, error: reposError } = await client
     .from("github_repos")
-    .select("*, category:tags!category_id(name)")
+    .select("*, category:tags!category_id(name), github_repo_tags(tags(name))")
     .order("created_at", { ascending: false });
   if (!reposError && repos) {
-    return (repos as unknown as (GithubRepo & { category: { name: string } | null })[]).map(
-      ({ category, ...r }) => normalize({ ...r, subcategory: category?.name ?? null }),
-    );
+    type Row = GithubRepo & {
+      category: { name: string } | null;
+      github_repo_tags: { tags: { name: string } | null }[] | null;
+    };
+    return (repos as unknown as Row[]).map(({ category, github_repo_tags, ...r }) => {
+      const extra = (github_repo_tags ?? []).map((t) => t.tags?.name);
+      const tags = [...new Set([category?.name, ...extra].filter((n): n is string => Boolean(n)))];
+      return normalize({ ...r, subcategory: category?.name ?? null, tags });
+    });
   }
 
   // Legacy: repos used to be `libraries` rows. The view only has the columns
@@ -52,10 +58,22 @@ export async function getGithubRepos(): Promise<{ repos: GithubRepo[]; error: bo
   }
 }
 
+export async function getGithubRepoBySlug(slug: string): Promise<GithubRepo | null> {
+  const { repos } = await getGithubRepos();
+  return repos.find((r) => r.slug === slug) ?? null;
+}
+
 export const GITHUB_FRAMEWORK = "GitHub Repository";
 export const GITHUB_PAGE_SIZE = 9;
 export const GITHUB_FALLBACK_GROUP = "Other";
 
 export function repoGroup(r: GithubRepo): string {
   return r.subcategory?.trim() || GITHUB_FALLBACK_GROUP;
+}
+
+export function formatStars(n: number | null): string {
+  const v = n ?? 0;
+  if (v < 1000) return String(v);
+  const k = v / 1000;
+  return k < 10 ? `${Math.floor(k * 10) / 10}k` : `${Math.round(k)}k`;
 }

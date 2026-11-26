@@ -60,6 +60,7 @@ function PaginationLink({
           variant: isActive ? "default" : "ghost",
           size,
         }),
+        "rounded-full",
         className
       )}
       {...props}

@@ -52,6 +52,7 @@ export default async function Home({
 }) {
   const params = await searchParams;
   const filters = params || {};
+  const savedView = filters.saved === "1" || Boolean(filters.list);
   const client = getSupabaseClient();
   const PAGE_SIZE = 15;
   let pageNum = 1;
@@ -63,8 +64,8 @@ export default async function Home({
 
   // Independent of the library query: start now so all fetches overlap.
   const highlightsPromise = getHighlights();
-  const showBrowse = filters.saved !== "1" && filters.github !== "1";
-  const githubPromise = filters.saved !== "1" ? getGithubRepos() : Promise.resolve(null);
+  const showBrowse = !savedView && filters.github !== "1";
+  const githubPromise = getGithubRepos();
 
   let libraries: Library[] = [];
   let totalCount: number | null = null;
@@ -90,7 +91,7 @@ export default async function Home({
     if (filters.q) query = query.ilike("name", `%${filters.q}%`);
     if (filters.framework) query = query.eq("framework", filters.framework);
     query = applySort(query, filters.sort);
-    if (filters.saved !== "1" && !filters.tag) query = query.range(offset, offset + PAGE_SIZE - 1);
+    if (!savedView && !filters.tag) query = query.range(offset, offset + PAGE_SIZE - 1);
 
     const [{ count: viewCount }, { data, error }] = await Promise.all([countQuery, query]);
     if (typeof viewCount === "number") totalCount = viewCount;
@@ -148,7 +149,7 @@ export default async function Home({
       if (filters.framework) libQuery = libQuery.eq("framework", filters.framework);
       if (tagLibIds) libQuery = libQuery.in("id", tagLibIds);
       libQuery = applySort(libQuery, filters.sort);
-      if (filters.saved !== "1") libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
+      if (!savedView) libQuery = libQuery.range(offset, offset + PAGE_SIZE - 1);
       const { data: libRows, error: libError } = await libQuery;
       if (libError) {
         console.error("Supabase fallback error", libError.message);
@@ -193,7 +194,7 @@ export default async function Home({
       lib.tags.some((t) => t.toLowerCase() === tag)
     );
     totalCount = all.length;
-    libraries = filters.saved === "1" ? all : all.slice(offset, offset + PAGE_SIZE);
+    libraries = savedView ? all : all.slice(offset, offset + PAGE_SIZE);
   }
 
   // Fallback to sample data when no Supabase env present
@@ -209,7 +210,7 @@ export default async function Home({
       return matchesQ && matchesFw && matchesTag;
     });
     totalCount = filtered.length;
-    libraries = filters.saved === "1" ? filtered : filtered.slice(offset, offset + PAGE_SIZE);
+    libraries = savedView ? filtered : filtered.slice(offset, offset + PAGE_SIZE);
   }
 
   const highlights = await highlightsPromise;
@@ -267,11 +268,11 @@ export default async function Home({
   return (
     <div className="min-h-screen">
         <div className="px-4 py-8 sm:px-6">
-        {filters.saved !== "1" && (
+        {!savedView && (
         <Hero />
         )}
 
-        {filters.saved !== "1" && !githubView && <HighlightSection highlights={highlights} />}
+        {!savedView && !githubView && <HighlightSection highlights={highlights} />}
 
         {showBrowse && (
           <div className="mt-6 flex justify-end">
@@ -279,9 +280,9 @@ export default async function Home({
           </div>
         )}
 
-        {!githubView && <Suspense fallback={null}><LibraryGrid libraries={libraries} /></Suspense>}
+        {!githubView && <Suspense fallback={null}><LibraryGrid libraries={libraries} repos={github?.repos ?? []} /></Suspense>}
 
-        {filters.saved !== "1" && !githubView ? (
+        {!savedView && !githubView ? (
         <div className="mt-10">
           <Pagination className="text-sm">
             <PaginationContent>
@@ -317,7 +318,7 @@ export default async function Home({
         </div>
         ) : null}
 
-        {github && (
+        {github && !savedView && (
           <GithubRepoSection
             repos={github.repos}
             error={github.error}

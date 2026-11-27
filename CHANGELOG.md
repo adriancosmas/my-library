@@ -5,6 +5,12 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-27
+
+### Fixed
+- List view on phones is a compact row (name and description left, actions right, tags hidden) so it differs from the grid.
+- Settings menu fits the screen width and opens from the left edge in the mobile drawer.
+
 ## [0.2.0] - 2026-11-26
 
 ### Added

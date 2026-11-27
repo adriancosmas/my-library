@@ -26,7 +26,7 @@ export default function LibraryCard({ lib }: { lib: Library }) {
 
   return (
     <div data-visited={visited || undefined} style={{ viewTransitionName: `card-${lib.id}` }} className="group relative flex h-full flex-col gap-4 in-data-[view=list]:flex-row in-data-[view=list]:items-center rounded-md bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-secondary">
-      <Link href={`/tools/${lib.slug}`} className="flex flex-1 flex-col gap-4 in-data-[view=list]:after:absolute in-data-[view=list]:after:inset-0 in-data-[view=list]:after:content-['']">
+      <Link href={`/tools/${lib.slug}`} className="flex min-w-0 flex-1 flex-col gap-4 in-data-[view=list]:after:absolute in-data-[view=list]:after:inset-0 in-data-[view=list]:after:content-['']">
         <div className="flex items-center gap-3">
           <div className="grid size-10 shrink-0 place-items-center rounded-sm bg-white/10">
             {imgError || !lib.logo_url ? (
@@ -50,8 +50,8 @@ export default function LibraryCard({ lib }: { lib: Library }) {
         <ClampedText text={lib.description} className="card-desc line-clamp-3 text-sm leading-6 text-muted-foreground" />
       </Link>
 
-      <div className="mt-auto flex items-center justify-between gap-2 in-data-[view=list]:mt-0 in-data-[view=list]:shrink-0 in-data-[view=list]:max-w-[45%] in-data-[view=list]:flex-col-reverse in-data-[view=list]:items-end in-data-[view=list]:justify-between in-data-[view=list]:self-stretch">
-        <div className="card-tags flex min-w-0 flex-wrap gap-2">
+      <div className="mt-auto flex items-center justify-between gap-2 in-data-[view=list]:mt-0 in-data-[view=list]:shrink-0 sm:in-data-[view=list]:max-w-[45%] in-data-[view=list]:flex-col-reverse in-data-[view=list]:items-end in-data-[view=list]:justify-between in-data-[view=list]:self-stretch">
+        <div className="card-tags flex min-w-0 flex-wrap gap-2 in-data-[view=list]:max-sm:hidden">
           {tags.map((t) => (
             <span
               key={t}

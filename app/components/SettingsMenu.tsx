@@ -122,9 +122,9 @@ export default function SettingsMenu({ fullWidth, iconOnly }: { fullWidth?: bool
       </PopoverTrigger>
       <PopoverContent
         side={iconOnly ? "right" : "top"}
-        align="end"
+        align={iconOnly ? "end" : "start"}
         collisionPadding={12}
-        className="thin-scrollbar max-h-[var(--radix-popover-content-available-height)] w-72 overflow-y-auto p-2"
+        className="thin-scrollbar max-h-[var(--radix-popover-content-available-height)] w-72 max-w-[calc(100vw-1.5rem)] overflow-y-auto p-2"
       >
         <p className="px-3 pb-1.5 pt-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">Display</p>
         <Switch label="Reduce motion" checked={motion === "reduce"} onChange={(v) => setMotion(v ? "reduce" : "full")} />
